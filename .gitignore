@@ -3,6 +3,8 @@
 /local.properties
 /.idea
 .idea
+/app/src/main/java/com/example/canvas_for_drawing/presentation/RegistrationUtil.kt
+/app/src/test/java/com/example/canvas_for_drawing/presentation/RegistrationUtilTest.kt
 .DS_Store
 /build
 /captures
