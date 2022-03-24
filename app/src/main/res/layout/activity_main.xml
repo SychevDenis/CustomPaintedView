@@ -5,15 +5,10 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <com.example.canvas_for_drawing.MyCustomView
-        android:id="@+id/customView"
+    <com.example.canvas_for_drawing.CustomSurfaceView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
-        android:backgroundTint="#FFFFFF"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="66dp"
-        tools:layout_editor_absoluteY="73dp" />
+       />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
