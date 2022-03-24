@@ -9,6 +9,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.GridLayout
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.view.isVisible
@@ -22,14 +23,17 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity() {
 
     private lateinit var fragmentCustomSurfaceView: FragmentCustomSurfaceView
+
     private lateinit var gridLayout: GridLayout
     //private lateinit var fragmentButtonGroup: FragmentButtonGroup
+
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private val viewModelCSV by lazy { //получение view model через фабрику
         ViewModelProvider(this, viewModelFactory)[ViewModelCSV::class.java]
     }
+
     private val viewModelMainActivity by lazy { //получение view model через фабрику
         ViewModelProvider(this, viewModelFactory)[ViewModelMainActivity::class.java]
     }
@@ -39,7 +43,14 @@ class MainActivity : AppCompatActivity() {
         DaggerComponentActivity.create().inject(this)
     }
 
-    // @SuppressLint("MissingInflatedId")
+
+
+    init {
+        //отправляем объект фрагмента в dagger2
+        DaggerComponentActivity.create().inject(this)
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -49,6 +60,7 @@ class MainActivity : AppCompatActivity() {
                 .replace(R.id.fragment_button_group, FragmentButtonGroup())
                 .commit()
         }
+
         gridLayout = findViewById(R.id.gridView)
         initViewModels()//инициализируем вью модели
         viewModelObserve()//подписываемся на обновления
@@ -84,7 +96,6 @@ class MainActivity : AppCompatActivity() {
         fragmentCustomSurfaceView = supportFragmentManager
             .findFragmentById(R.id.fragment_customSv_containerView) as FragmentCustomSurfaceView
         //        fragmentButtonGroup = supportFragmentManager
-//            .findFragmentById(R.id.fragment_button_group) as FragmentButtonGroup
 
     }
 
@@ -97,18 +108,15 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.menuActivityButtonClean -> {
                 viewModelCSV.clearCanvas()
-                //       ?: run { throw Exception("fragmentCustomSurfaceView is null") }
             }
 
             R.id.menuActivityButtonPalette -> {
                 viewModelMainActivity.reversVisible()
-//                    ?: run {
-//                        throw Exception("fragmentCustomSurfaceView is null")
-//                    }
+
             }
 
             R.id.menuActivityButtonSaveImage -> {
-                //  save()//сохранить канвас в jpg
+                save()//сохранить канвас в jpg
             }
         }
         return true
@@ -117,9 +125,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun save() {
         if (getPermissionWriteReadExternalExternalStorage()) {
-//            if (viewModelCSV.saveCanvas())
-//                Toast.makeText(this, "Сохранено", Toast.LENGTH_SHORT).show()
-//            else Toast.makeText(this, "Ошибка сохранения", Toast.LENGTH_SHORT).show()
+            if (viewModelCSV.saveCanvas())
+                Toast.makeText(this, "Сохранено", Toast.LENGTH_SHORT).show()
+            else Toast.makeText(this, "Ошибка сохранения", Toast.LENGTH_SHORT).show()
         }
     }
 

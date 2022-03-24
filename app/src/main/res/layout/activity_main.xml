@@ -38,7 +38,4 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:listitem="@layout/item_color_rv">
     </GridLayout>
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>
-
