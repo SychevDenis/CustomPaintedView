@@ -5,16 +5,23 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
-    private var button:Button?=null
+    private var buttonClean:Button?=null
+    private var buttonBack:Button?=null
     private var customSurfaceView:CustomSurfaceView?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        button=findViewById(R.id.button)
+        buttonClean=findViewById(R.id.buttonClean)
+        buttonBack=findViewById(R.id.buttonBack)
         customSurfaceView=findViewById(R.id.customSurfaceView)
-        button?.setOnClickListener(){
+        buttonClean?.setOnClickListener(){
             customSurfaceView?.apply {
-                clear=true
+                clean=true
+            }
+        }
+        buttonBack?.setOnClickListener(){
+            customSurfaceView?.apply {
+                back=true
             }
         }
     }

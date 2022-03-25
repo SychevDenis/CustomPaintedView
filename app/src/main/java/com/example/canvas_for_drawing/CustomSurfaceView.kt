@@ -12,7 +12,6 @@ import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import kotlinx.coroutines.*
-import java.lang.Exception
 
 class CustomSurfaceView @JvmOverloads constructor( //jvm помогает выбрать тот конструктор, который нужен
     context: Context?, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -20,14 +19,12 @@ class CustomSurfaceView @JvmOverloads constructor( //jvm помогает выб
 
 
     private lateinit var canvas: Canvas
-    private val path: Path by lazy { Path() }
     private val paint: Paint = Paint(Paint.SUBPIXEL_TEXT_FLAG)
     val scope = CoroutineScope(Dispatchers.Default)
-    private var canvasX: Float = 1f
-    private var canvasY: Float = 1f
     private var work: Boolean = true
-    var clear: Boolean = false //переменная отчистки экрана
-    val layers = mutableListOf<Canvas>() // слои
+    var clean: Boolean = false //переменная отчистки экрана
+    var back: Boolean = false //переменная назад
+    var paths = mutableListOf<Path>() // слои
 
     init {
         holder.addCallback(this)
@@ -45,18 +42,29 @@ class CustomSurfaceView @JvmOverloads constructor( //jvm помогает выб
             canvas = holder.lockCanvas()
             canvas.drawColor(Color.WHITE)
             holder.unlockCanvasAndPost(canvas)
-            delay(1000)//для загрузки
+
             while (true) {//цикл работы отрисовки
-                if (clear){
-                    path.reset()
-                    clear=false
+                if (clean) {
+                    while (paths.size>0) {
+                        paths.removeLast()
+                    }
+                    clean = false
+                }
+                if (back) {
+                    if (paths.size>0) {
+                        paths.removeLast()
+                    }
+                    back = false
                 }
                 if (work) {
                     canvas = holder.lockCanvas()
                     canvas.drawColor(Color.WHITE)
-                    canvas.drawPath(path, paint)
+                    if (paths.isNotEmpty()) { //если массив не пустой
+                        for (path in paths)
+                        canvas.drawPath(path, paint) //рисуем последний элемент массива
+                    }
                     holder.unlockCanvasAndPost(canvas)
-                    delay(21)//для частоты кадров 48/1сек
+                    delay(24)//для частоты кадров 48/1сек
                 }
 //                if (work) {
 //                    canvas = holder.lockCanvas()
@@ -86,8 +94,19 @@ class CustomSurfaceView @JvmOverloads constructor( //jvm помогает выб
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         when (event?.action) {
-            MotionEvent.ACTION_DOWN -> path.moveTo(event.x, event.y)
-            MotionEvent.ACTION_MOVE -> path.lineTo(event.x, event.y)
+            MotionEvent.ACTION_DOWN -> { //при нажатии клавиши
+                var path = Path() //создаем новый объект path
+                if (paths.size>1) {
+                }
+                paths.add(path) //добавляем его в массив
+                paths.last().moveTo(event.x, event.y)  //рисуем начальную точку
+            }
+            MotionEvent.ACTION_MOVE -> paths.last().lineTo(event.x, event.y) //рисуем объект
+            MotionEvent.ACTION_UP -> {
+                if (paths.size > 1) {
+
+                }
+            }//добавляем в массив при отпускании
         }
         return true
     }
