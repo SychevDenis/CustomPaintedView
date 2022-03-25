@@ -25,7 +25,9 @@ class CustomSurfaceView @JvmOverloads constructor( //jvm помогает выб
     val scope = CoroutineScope(Dispatchers.Default)
     private var canvasX: Float = 1f
     private var canvasY: Float = 1f
-    var work: Boolean = true
+    private var work: Boolean = true
+    var clear: Boolean = false //переменная отчистки экрана
+    val layers = mutableListOf<Canvas>() // слои
 
     init {
         holder.addCallback(this)
@@ -45,11 +47,16 @@ class CustomSurfaceView @JvmOverloads constructor( //jvm помогает выб
             holder.unlockCanvasAndPost(canvas)
             delay(1000)//для загрузки
             while (true) {//цикл работы отрисовки
+                if (clear){
+                    path.reset()
+                    clear=false
+                }
                 if (work) {
                     canvas = holder.lockCanvas()
                     canvas.drawColor(Color.WHITE)
                     canvas.drawPath(path, paint)
                     holder.unlockCanvasAndPost(canvas)
+                    delay(21)//для частоты кадров 48/1сек
                 }
 //                if (work) {
 //                    canvas = holder.lockCanvas()
@@ -71,7 +78,7 @@ class CustomSurfaceView @JvmOverloads constructor( //jvm помогает выб
 
     override fun surfaceDestroyed(p0: SurfaceHolder) {
         scope.cancel()
-        holder?.removeCallback(this)
+        holder.removeCallback(this)
         Log.i("Surface", "Destroy")
     }
 
