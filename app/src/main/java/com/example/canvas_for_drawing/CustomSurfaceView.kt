@@ -12,19 +12,23 @@ import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import kotlinx.coroutines.*
+import java.lang.Exception
 
 class CustomSurfaceView @JvmOverloads constructor( //jvm помогает выбрать тот конструктор, который нужен
     context: Context?, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : SurfaceView(context, attrs, defStyleAttr), SurfaceHolder.Callback {
 
 
-    private lateinit var canvas: Canvas
+    private lateinit var canvas: Canvas //полотно рисования
+    private var colorCanvas = Color.WHITE
     private val paint: Paint = Paint(Paint.SUBPIXEL_TEXT_FLAG)
-    val scope = CoroutineScope(Dispatchers.Default)
-    private var work: Boolean = true
+    private val scope = CoroutineScope(Dispatchers.Default)
     var clean: Boolean = false //переменная отчистки экрана
     var back: Boolean = false //переменная назад
-    var paths = mutableListOf<Path>() // слои
+    var next: Boolean = false //переменная вперед
+    var paths = mutableListOf<Path>() //слои нарисованных объектов
+    var pathsLayer = 0 //переменная активного слоя
+    var shou = false //переменная обновления картинки
 
     init {
         holder.addCallback(this)
@@ -44,50 +48,57 @@ class CustomSurfaceView @JvmOverloads constructor( //jvm помогает выб
             holder.unlockCanvasAndPost(canvas)
 
             while (true) {//цикл работы отрисовки
-                if (clean) {
-                    while (paths.size>0) {
+                if (clean) { //если нажата кнопка отчистки экрана
+                    while (paths.size > 0) {
                         paths.removeLast()
+                        pathsLayer = 0
+                        shou = true
                     }
                     clean = false
                 }
-                if (back) {
-                    if (paths.size>0) {
-                        paths.removeLast()
+                if (back) { //если нажата кнопка отчистки назад
+                    if (pathsLayer > 0) {
+                        pathsLayer--
+                        shou = true
                     }
                     back = false
                 }
-                if (work) {
+                if (next) { //если нажата кнопка отчистки вперед
+                    if (pathsLayer < paths.size) {
+                        pathsLayer++
+                        shou = true
+                    }
+                    next = false
+                }
+                if (shou) {
                     canvas = holder.lockCanvas()
                     canvas.drawColor(Color.WHITE)
                     if (paths.isNotEmpty()) { //если массив не пустой
-                        for (path in paths)
-                        canvas.drawPath(path, paint) //рисуем последний элемент массива
+                        try { //иногда выдает ошибку, пока не разобрался почему, по этому сделал конструкцию try catch
+                            var i = 1
+                            while (i <= pathsLayer) {
+                                canvas.drawPath(paths[i - 1], paint) //рисуем массив
+                                i++
+                            }
+                            Log.i("log", pathsLayer.toString())
+                            shou = false
+                        } catch (e: Exception) {
+                        }
                     }
                     holder.unlockCanvasAndPost(canvas)
-                    delay(24)//для частоты кадров 48/1сек
+                    delay(24)// пауза для частоты кадров 48/1сек
                 }
-//                if (work) {
-//                    canvas = holder.lockCanvas()
-//                    canvas.drawColor(Color.WHITE)
-//                    paint.color = Color.BLACK
-//                    paint.style = Paint.Style.STROKE
-//                    paint.strokeWidth = 10f
-//                    canvas.drawPoint(canvasX++, canvasY++, paint)
-//                    holder.unlockCanvasAndPost(canvas)
-//                    delay(42)//для частоты кадров 24/1сек
-//                }
             }
         }.start()
     }
 
     override fun surfaceChanged(p0: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
-        Log.i("Surface", "2")
+
     }
 
     override fun surfaceDestroyed(p0: SurfaceHolder) {
         scope.cancel()
         holder.removeCallback(this)
-        Log.i("Surface", "Destroy")
     }
 
 
@@ -95,17 +106,23 @@ class CustomSurfaceView @JvmOverloads constructor( //jvm помогает выб
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         when (event?.action) {
             MotionEvent.ACTION_DOWN -> { //при нажатии клавиши
-                var path = Path() //создаем новый объект path
-                if (paths.size>1) {
+                if (pathsLayer < paths.size) {
+                    while (pathsLayer < paths.size) {
+                        paths.removeLast()
+                    }
                 }
+                shou = true
+                val path = Path() //создаем новый объект path
                 paths.add(path) //добавляем его в массив
                 paths.last().moveTo(event.x, event.y)  //рисуем начальную точку
+                pathsLayer++
             }
-            MotionEvent.ACTION_MOVE -> paths.last().lineTo(event.x, event.y) //рисуем объект
+            MotionEvent.ACTION_MOVE -> {
+                paths.last().lineTo(event.x, event.y)
+                shou = true
+            }
+            //рисуем объект
             MotionEvent.ACTION_UP -> {
-                if (paths.size > 1) {
-
-                }
             }//добавляем в массив при отпускании
         }
         return true
