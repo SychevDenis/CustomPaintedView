@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CustomViewDraw">
         <activity
-            android:name="com.example.canvas_for_drawing.MainActivity"
+            android:name="com.example.canvas_for_drawing.presentation.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
