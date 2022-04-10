@@ -1,10 +1,11 @@
 package com.example.canvas_for_drawing.domain
 
+import android.graphics.Path
 import com.example.canvas_for_drawing.domain.models.DrawingObject
 
 class PaintUseCase(private val canvasRepository: CanvasRepository) {
 
-    fun paint(drawingObject: DrawingObject): android.graphics.Path {
+    fun paint(drawingObject: DrawingObject): MutableList<Path> {
         return if (drawingObject.eventAction == ACTION_DOWN) {
             canvasRepository.paintMoveTo(drawingObject)
         } else

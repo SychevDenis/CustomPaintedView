@@ -1,9 +1,7 @@
 package com.example.canvas_for_drawing.presentation
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
 import com.example.canvas_for_drawing.R
 
@@ -20,10 +18,9 @@ class MainActivity : AppCompatActivity() {
             customSurfaceView.colorCanvas=it
         }
         customSurfaceView.modelDrawingObjectLD.observe(this){
-           customSurfaceView.path = viewModel.paint(it)
-            //Log.i("Log", it.eventY.toString() +" "+ it.eventAction.toString()+ " "+ it.eventX.toString())
+           customSurfaceView.paths = viewModel.paint(it)
+           //Log.i("Log", it.eventY.toString() +" "+ it.eventAction.toString()+ " "+ it.eventX.toString())
         }
-
     }
 }
 

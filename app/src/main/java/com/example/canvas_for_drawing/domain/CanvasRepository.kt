@@ -6,7 +6,7 @@ import com.example.canvas_for_drawing.domain.models.DrawingObject
 
 interface CanvasRepository {
     fun setColorBack():LiveData<Int>
-    fun paintMoveTo(drawingObject: DrawingObject): Path
-    fun paintLineTo(drawingObject: DrawingObject): Path
+    fun paintMoveTo(drawingObject: DrawingObject): MutableList<Path>
+    fun paintLineTo(drawingObject: DrawingObject): MutableList<Path>
 
 }
