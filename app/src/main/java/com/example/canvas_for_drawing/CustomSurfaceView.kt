@@ -95,7 +95,7 @@ class CustomSurfaceView @JvmOverloads constructor( //jvm помогает выб
 
     override fun surfaceDestroyed(p0: SurfaceHolder) {
         scope.cancel()
-        //holder.removeCallback(this)
+        holder.removeCallback(this)
         Log.i("log","3")
     }
 

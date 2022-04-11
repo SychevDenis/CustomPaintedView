@@ -8,5 +8,6 @@ interface CanvasRepository {
     fun setColorBack():LiveData<Int>
     fun paintMoveTo(drawingObject: DrawingObject): MutableList<Path>
     fun paintLineTo(drawingObject: DrawingObject): MutableList<Path>
+    fun showCanvas(): MutableList<Path>
 
 }
