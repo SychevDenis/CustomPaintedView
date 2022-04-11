@@ -2,6 +2,7 @@ package com.example.canvas_for_drawing.presentation
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -13,6 +14,7 @@ import android.view.SurfaceView
 import androidx.lifecycle.MutableLiveData
 import com.example.canvas_for_drawing.domain.models.DrawingObject
 import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
 
 class CustomSurfaceView @JvmOverloads constructor( //jvm помогает выбрать тот конструктор, который нужен
     context: Context?, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -21,12 +23,9 @@ class CustomSurfaceView @JvmOverloads constructor( //jvm помогает выб
 
     private val modelDrawingObject = DrawingObject(0F, 0F, 0)//модель для слежения нажатий по вью
     var modelDrawingObjectLD = MutableLiveData<DrawingObject>()//lifeData для отслеживания нажатий
-
-    var pathsLD = MutableLiveData<MutableList<Path>>() //слои нарисованных объектов
     var paths = mutableListOf<Path>()
-    lateinit var canvas: Canvas
+    private var canvas:Canvas? = Canvas()
     var colorCanvas = Color.WHITE
-    var path = Path()
     val paint: Paint = Paint(Paint.SUBPIXEL_TEXT_FLAG)
 
     private val scope = CoroutineScope(Dispatchers.IO)
@@ -38,36 +37,38 @@ class CustomSurfaceView @JvmOverloads constructor( //jvm помогает выб
             style = Paint.Style.STROKE
             strokeWidth = 3f
             color = Color.BLACK
-            isAntiAlias = true
         }
     }
 
     override fun surfaceCreated(p0: SurfaceHolder) {
         scope.launch {
             while (true) {
-                canvas = holder.lockCanvas()
-                canvas.drawColor(colorCanvas)//заливка цвета фона
-                drawLayers(canvas)//послойное рисование
-                holder.unlockCanvasAndPost(canvas)
-                delay(24)
+                canvas=null
+                if (holder.surface.isValid) {
+                    canvas = holder.lockCanvas()
+                    if (canvas!=null) {
+                        canvas?.drawColor(colorCanvas)//заливка цвета фона
+                        drawLayers(canvas)//послойное рисование
+                        holder.unlockCanvasAndPost(canvas)
+                        delay(24)
+                    }
+                }
             }
         }.start()
     }
 
-    private fun drawLayers(canvas: Canvas) { //послойное рисование
-        pathsLD.value?.let {
-            paths=it
-        }
+    private fun drawLayers(canvas: Canvas?) { //послойное рисование
         if (paths.isNotEmpty()) {
             var i = 1
             while (i <= paths.size) {
-                canvas.drawPath(paths[i - 1], paint) //рисуем массив
+                canvas?.drawPath(paths[i - 1], paint) //рисуем массив
                 i++
             }
         }
     }
 
     override fun surfaceChanged(p0: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
+
     }
 
     override fun surfaceDestroyed(p0: SurfaceHolder) {
@@ -105,5 +106,13 @@ class CustomSurfaceView @JvmOverloads constructor( //jvm помогает выб
             }
         }
         return true
+    }
+
+    fun getScreenOrientation(): String {//отслеживание ориентации
+        return when (resources.configuration.orientation) {
+            Configuration.ORIENTATION_PORTRAIT -> "portrait"
+            Configuration.ORIENTATION_LANDSCAPE -> "landscape"
+            else -> ""
+        }
     }
 }

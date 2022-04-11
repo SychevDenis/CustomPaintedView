@@ -21,7 +21,7 @@ object CanvasRepositoryImpl:CanvasRepository {
         val path = Path()
         paths.add(path) //добавляем его в массив
         paths.last().moveTo(drawingObject.eventX,drawingObject.eventY)  //рисуем начальную точку.
-        Log.i("log", paths.size.toString())
+        Log.i("log", paths.size.toString() + " слоев")
         return paths
     }
 
@@ -29,4 +29,9 @@ object CanvasRepositoryImpl:CanvasRepository {
         paths.last().lineTo(drawingObject.eventX,drawingObject.eventY)
         return paths
     }
+
+    override fun showCanvas(): MutableList<Path> {
+       return paths
+    }
+
 }
