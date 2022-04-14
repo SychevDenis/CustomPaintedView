@@ -3,7 +3,8 @@ package com.example.canvas_for_drawing.domain.models
 data class DrawingObject(
     var eventX: Float,
     var eventY: Float,
-    var eventAction: Int
+    var eventAction: Int,
+    var infoLayer:InfoLayerCanvas
 )
 {
     companion object {
