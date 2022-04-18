@@ -1,19 +1,23 @@
 package com.example.canvas_for_drawing.domain.use_case
 
-import android.graphics.Path
+
+import androidx.lifecycle.MutableLiveData
 import com.example.canvas_for_drawing.domain.CanvasRepository
 import com.example.canvas_for_drawing.domain.models.DrawingObject
 
 
 class PaintUseCase(private val canvasRepository: CanvasRepository) {
-    fun paint(drawingObject: DrawingObject): MutableList<Path> {
-        if (drawingObject.eventAction == ACTION_DOWN) {
-            if (drawingObject.infoLayer.activeLayerCanvas<=drawingObject.infoLayer.layerSizeCanvas){
-                canvasRepository.delListToActiveLayer(drawingObject)
-            }
-            return canvasRepository.paintMoveTo(drawingObject)
-        } else
-            return canvasRepository.paintLineTo(drawingObject)
+    fun paint(drawingObject: MutableLiveData<DrawingObject>):MutableLiveData<DrawingObject> {
+        drawingObject.value?.let {
+            if (it.eventAction == ACTION_DOWN) {
+                if (it.infoLayer.activeLayerCanvas <= it.infoLayer.layerSizeCanvas) {
+                    canvasRepository.delListToActiveLayer(drawingObject)
+                }
+                canvasRepository.paintMoveTo(drawingObject)
+            } else
+                canvasRepository.paintLineTo(drawingObject)
+        }
+        return drawingObject
     }
 
     companion object {

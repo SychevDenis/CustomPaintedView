@@ -1,5 +1,8 @@
 package com.example.canvas_for_drawing.presentation
 
+import android.graphics.Path
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.canvas_for_drawing.data.CanvasRepositoryImpl
 import com.example.canvas_for_drawing.domain.models.DrawingObject
@@ -8,7 +11,7 @@ import com.example.canvas_for_drawing.domain.models.InfoLayerCanvas
 import com.example.canvas_for_drawing.domain.use_case.*
 
 
-class ViewModelFragmentSv() : ViewModel() {
+class ViewModelFragmentCustomSurfaceView() : ViewModel() {
 
     private val repository=CanvasRepositoryImpl
 
@@ -16,7 +19,7 @@ class ViewModelFragmentSv() : ViewModel() {
     fun setColorBack()=setColorBack.setColorBack()
 
     private val paint = PaintUseCase(repository)
-    fun paint(drawingObject: DrawingObject)=paint.paint(drawingObject)
+    fun paint(drawingObject: MutableLiveData<DrawingObject>) =paint.paint(drawingObject)
 
     private val showCanvas = ShowCanvasUseCase(repository)
     fun showCanvas()=showCanvas.showCanvas()
@@ -29,5 +32,8 @@ class ViewModelFragmentSv() : ViewModel() {
 
     private val getInfoLayer = GetInfoLayerUseCase(repository)
     fun getInfoLayer()=getInfoLayer.getInfoLayer()
+
+    private val cleanCanvas = CleanCanvasUseCase(repository)
+    fun cleanCanvas()=cleanCanvas.cleanCanvas()
 
 }

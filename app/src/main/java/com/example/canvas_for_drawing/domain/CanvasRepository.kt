@@ -8,12 +8,12 @@ import com.example.canvas_for_drawing.domain.models.InfoLayerCanvas
 
 interface CanvasRepository {
     fun setColorBack():LiveData<Int>
-    fun paintMoveTo(drawingObject: DrawingObject): MutableList<Path>
-    fun paintLineTo(drawingObject: DrawingObject): MutableList<Path>
-    fun showCanvas(): MutableList<Path>
+    fun paintMoveTo(drawingObject: MutableLiveData<DrawingObject>):MutableLiveData<DrawingObject>
+    fun paintLineTo(drawingObject: MutableLiveData<DrawingObject>):MutableLiveData<DrawingObject>
+    fun showCanvas(): MutableLiveData<MutableList<Path>>
     fun clickBack(infoLayerCanvas: InfoLayerCanvas)
     fun clickNext(infoLayerCanvas: InfoLayerCanvas)
     fun getInfoLayer(): MutableLiveData<Int>
-    fun delListToActiveLayer(drawingObject: DrawingObject)
-
+    fun delListToActiveLayer(drawingObject: MutableLiveData<DrawingObject>)
+    fun cleanCanvas()
 }

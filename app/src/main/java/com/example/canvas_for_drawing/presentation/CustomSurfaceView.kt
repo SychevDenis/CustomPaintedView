@@ -86,6 +86,7 @@ class CustomSurfaceView @JvmOverloads constructor( //jvm помогает выб
     }
 
     private fun drawLayers(canvas: Canvas) { //послойное рисование
+
         if (paths.isNotEmpty()) {
             var i = 1
             while (i <= activeLayer) {
@@ -107,7 +108,7 @@ class CustomSurfaceView @JvmOverloads constructor( //jvm помогает выб
             }
     }
 
-    fun infoLayerCanvas(): InfoLayerCanvas {
+    private fun infoLayerCanvas(): InfoLayerCanvas {
         infoLayerCanvas.apply {
             activeLayerCanvas = activeLayer
             layerSizeCanvas = paths.size

@@ -1,7 +1,6 @@
 package com.example.canvas_for_drawing.domain.use_case
 
 import com.example.canvas_for_drawing.domain.CanvasRepository
-import com.example.canvas_for_drawing.domain.models.DrawingObject
 import com.example.canvas_for_drawing.domain.models.InfoLayerCanvas
 
 class ClickBackUseCase(private val canvasRepository: CanvasRepository) {
