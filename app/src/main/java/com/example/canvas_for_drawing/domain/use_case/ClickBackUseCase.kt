@@ -5,7 +5,7 @@ import com.example.canvas_for_drawing.domain.models.InfoLayerCanvas
 
 class ClickBackUseCase(private val canvasRepository: CanvasRepository) {
     fun clickBack(infoLayerCanvas: InfoLayerCanvas) {
-        if (infoLayerCanvas.activeLayerCanvas>0)
-       canvasRepository.clickBack(infoLayerCanvas)
+        if (infoLayerCanvas.activeLayerCanvas > 0)
+            canvasRepository.clickBack(infoLayerCanvas)
     }
 }

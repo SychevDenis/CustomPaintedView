@@ -1,13 +1,12 @@
 package com.example.canvas_for_drawing.presentation
 
-import android.graphics.Path
-import androidx.lifecycle.LiveData
+import android.graphics.Canvas
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.canvas_for_drawing.data.CanvasRepositoryImpl
 import com.example.canvas_for_drawing.domain.models.DrawingObject
 import com.example.canvas_for_drawing.domain.models.InfoLayerCanvas
-
+import com.example.canvas_for_drawing.domain.models.OnSizeChanged
 import com.example.canvas_for_drawing.domain.use_case.*
 
 
@@ -36,4 +35,6 @@ class ViewModelFragmentCustomSurfaceView() : ViewModel() {
     private val cleanCanvas = CleanCanvasUseCase(repository)
     fun cleanCanvas()=cleanCanvas.cleanCanvas()
 
+    private val saveCanvas = SaveCanvasUseCase(repository)
+    fun saveCanvas(onSizeChanged: OnSizeChanged)=saveCanvas.saveCanvas(onSizeChanged)
 }

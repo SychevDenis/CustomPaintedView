@@ -3,10 +3,8 @@ package com.example.canvas_for_drawing.presentation
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Path
+import android.graphics.*
+import android.os.Environment
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.SurfaceHolder
@@ -14,7 +12,12 @@ import android.view.SurfaceView
 import androidx.lifecycle.MutableLiveData
 import com.example.canvas_for_drawing.domain.models.DrawingObject
 import com.example.canvas_for_drawing.domain.models.InfoLayerCanvas
+import com.example.canvas_for_drawing.domain.models.OnSizeChanged
 import kotlinx.coroutines.*
+import java.io.File
+import java.io.FileOutputStream
+import java.util.*
+
 
 class CustomSurfaceView @JvmOverloads constructor( //jvm помогает выбрать тот конструктор, который нужен
     context: Context?, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -24,13 +27,15 @@ class CustomSurfaceView @JvmOverloads constructor( //jvm помогает выб
 
     var modelDrawingObjectLD =
         MutableLiveData<DrawingObject>()//создание модели с координатами рисования и вида нажатий
-    var infoLayerCanvas = InfoLayerCanvas(0, 0)
+    var activeLayer = 0 //активный слой
+    var infoLayerCanvas = InfoLayerCanvas(0, activeLayer)
     private val modelDrawingObject = DrawingObject(0F, 0F, 0, infoLayerCanvas)
     var paths = mutableListOf<Path>() //слои
-    var activeLayer = 0 //активный слой
     private var canvas: Canvas? = Canvas()
+    var onSizeChanged=OnSizeChanged()
     var colorCanvas = Color.WHITE
     private val paint: Paint = Paint(Paint.SUBPIXEL_TEXT_FLAG)
+    var painting=true
 
     private val scope = CoroutineScope(Dispatchers.IO)
 
@@ -38,14 +43,14 @@ class CustomSurfaceView @JvmOverloads constructor( //jvm помогает выб
         holder.addCallback(this)
         paint.apply { //default
             style = Paint.Style.STROKE
-            strokeWidth = 3f
+            strokeWidth = 10f
             color = Color.BLACK
         }
     }
 
     override fun surfaceCreated(p0: SurfaceHolder) {
         scope.launch {
-            while (true) {
+            while (painting) {
                 canvas = null
                 if (holder.surface.isValid) {
                     canvas = holder.lockCanvas()
@@ -53,15 +58,15 @@ class CustomSurfaceView @JvmOverloads constructor( //jvm помогает выб
                         it.drawColor(colorCanvas)//заливка цвета фона
                         drawLayers(it)//послойное рисование
                         holder.unlockCanvasAndPost(it)
-                        delay(24)
                     }
+                    delay(24)
                 }
             }
         }.start()
     }
 
     override fun surfaceChanged(p0: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
-
+        holder.removeCallback(this)
     }
 
     override fun surfaceDestroyed(p0: SurfaceHolder) {
@@ -86,7 +91,6 @@ class CustomSurfaceView @JvmOverloads constructor( //jvm помогает выб
     }
 
     private fun drawLayers(canvas: Canvas) { //послойное рисование
-
         if (paths.isNotEmpty()) {
             var i = 1
             while (i <= activeLayer) {
@@ -115,7 +119,10 @@ class CustomSurfaceView @JvmOverloads constructor( //jvm помогает выб
         }
         return this.infoLayerCanvas
     }
-
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        onSizeChanged = OnSizeChanged(w,h,oldw,oldh)
+    }
     fun getScreenOrientation(): String {//отслеживание ориентации
         return when (resources.configuration.orientation) {
             Configuration.ORIENTATION_PORTRAIT -> "portrait"
