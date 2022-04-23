@@ -4,7 +4,8 @@ data class DrawingObject(
     var eventX: Float,
     var eventY: Float,
     var eventAction: Int,
-    var infoLayer:InfoLayerCanvas
+    var infoLayer:InfoLayerCanvas,
+    var settingPaint:SettingPaintObject
 )
 {
     companion object {

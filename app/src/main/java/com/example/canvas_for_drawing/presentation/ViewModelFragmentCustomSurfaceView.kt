@@ -1,12 +1,12 @@
 package com.example.canvas_for_drawing.presentation
 
-import android.graphics.Canvas
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.canvas_for_drawing.data.CanvasRepositoryImpl
 import com.example.canvas_for_drawing.domain.models.DrawingObject
 import com.example.canvas_for_drawing.domain.models.InfoLayerCanvas
 import com.example.canvas_for_drawing.domain.models.OnSizeChanged
+import com.example.canvas_for_drawing.domain.models.SettingPaintObject
 import com.example.canvas_for_drawing.domain.use_case.*
 
 
@@ -20,8 +20,11 @@ class ViewModelFragmentCustomSurfaceView() : ViewModel() {
     private val paint = PaintUseCase(repository)
     fun paint(drawingObject: MutableLiveData<DrawingObject>) =paint.paint(drawingObject)
 
-    private val showCanvas = ShowCanvasUseCase(repository)
-    fun showCanvas()=showCanvas.showCanvas()
+    private val showCanvasPath = ShowCanvasPathsUseCase(repository)
+    fun showCanvasPaths()=showCanvasPath.showCanvasPaths()
+
+    private val showCanvas = ShowCanvasPaintUseCase(repository)
+    fun showCanvasPaint()=showCanvas.showCanvasPaint()
 
     private val clickBack = ClickBackUseCase(repository)
     fun clickBack(infoLayerCanvas: InfoLayerCanvas)=clickBack.clickBack(infoLayerCanvas)
@@ -37,4 +40,7 @@ class ViewModelFragmentCustomSurfaceView() : ViewModel() {
 
     private val saveCanvas = SaveCanvasUseCase(repository)
     fun saveCanvas(onSizeChanged: OnSizeChanged)=saveCanvas.saveCanvas(onSizeChanged)
+
+    private val settingPaint = SettingPaintUseCase(repository)
+    fun settingPaint(settingPaintObject: SettingPaintObject)=settingPaint.settingPaint(settingPaintObject)
 }

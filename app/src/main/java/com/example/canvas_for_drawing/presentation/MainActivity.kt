@@ -3,25 +3,18 @@ package com.example.canvas_for_drawing.presentation
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.graphics.applyCanvas
 import com.example.canvas_for_drawing.R
-import com.example.canvas_for_drawing.data.CanvasRepositoryImpl
+import com.example.canvas_for_drawing.domain.models.SettingPaintObject
 import com.example.canvas_for_drawing.presentation.fragments.FragmentButtonGroup
 import com.example.canvas_for_drawing.presentation.fragments.FragmentCustomSurfaceView
 import java.io.*
-import java.lang.Exception
 
 
 class MainActivity : AppCompatActivity() {
@@ -37,32 +30,34 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean { //загружаем меню
         menuInflater.inflate(R.menu.main_menu, menu)
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean { //кнопки меню
         when (item.itemId) {
             R.id.menuActivityButtonClean -> {
                 clean()//очистить канвас
             }
             R.id.menuActivityButtonSaveImage -> {
                 save()//очистить канвас в jpg
-
             }
         }
         return true
     }
 
-    fun onClickBack() {
+    fun onClickBack() {//назад
         FragmentCustomSurfaceView.clickBack()
     }
 
-    fun onClickNext() {
+    fun onClickNext() {//назад
         FragmentCustomSurfaceView.clickNext()
     }
-    fun clean() {
+    fun settingPaint(settingPaintObject: SettingPaintObject){//размер кисти
+        FragmentCustomSurfaceView.settingPaint(settingPaintObject)
+    }
+    private fun clean() {
         FragmentCustomSurfaceView.clickClean()//метод отчистки экрана во врагменте
         Toast.makeText(this, "Экран очищен", Toast.LENGTH_SHORT).show()
     }

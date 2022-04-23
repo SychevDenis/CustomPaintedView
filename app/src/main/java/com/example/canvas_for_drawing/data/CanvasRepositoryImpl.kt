@@ -1,8 +1,10 @@
 package com.example.canvas_for_drawing.data
 
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Path
 import android.os.Environment
-import android.util.Log
 import androidx.core.graphics.applyCanvas
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,18 +12,19 @@ import com.example.canvas_for_drawing.domain.CanvasRepository
 import com.example.canvas_for_drawing.domain.models.DrawingObject
 import com.example.canvas_for_drawing.domain.models.InfoLayerCanvas
 import com.example.canvas_for_drawing.domain.models.OnSizeChanged
+import com.example.canvas_for_drawing.domain.models.SettingPaintObject
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-
 
 object CanvasRepositoryImpl : CanvasRepository {
     private var colorBack = MutableLiveData<Int>()//звет фона
     private var paths = mutableListOf<Path>() //слои нарисованных объектов
     private var pathsLD = MutableLiveData<MutableList<Path>>() //слои нарисованных объектов LD
+    private var paints = mutableListOf<Paint>() //слои паинтов
+    private var paintsLD = MutableLiveData<MutableList<Paint>>()//слои паинтов LD
     private var activeLayerLD = MutableLiveData<Int>()//активный слой
     private var activeLayer = 0//активный слой
-
 
     override fun setColorBack(): LiveData<Int> {
         colorBack.value = Color.WHITE
@@ -37,9 +40,12 @@ object CanvasRepositoryImpl : CanvasRepository {
             paths.add(path) //добавляем его в массив
             paths.last().moveTo(it.eventX, it.eventY)
             pathsLD.value = paths
-            //Log.i("log", "${activeLayerLD?.value.toString()} слой активный")
-//            Log.i("log", "${paths.size} слоев")
-//            Log.i("log", "$activeLayer слой активный")
+            val paint=Paint(Paint.SUBPIXEL_TEXT_FLAG)
+            paints.add(paint)
+            paints.last().style = Paint.Style.STROKE
+            paints.last().color=it.settingPaint.color
+            paints.last().strokeWidth=it.settingPaint.strokeWidth
+            paintsLD.value= paints
         }
         return drawingObject
     }
@@ -48,25 +54,33 @@ object CanvasRepositoryImpl : CanvasRepository {
         drawingObject.value?.let {
             paths.last().lineTo(it.eventX, it.eventY)
             pathsLD.value = paths
+            paints.last().color=it.settingPaint.color
+            paints.last().strokeWidth=it.settingPaint.strokeWidth
+            paintsLD.value= paints
         }
         return drawingObject
     }
 
-    override fun showCanvas(): MutableLiveData<MutableList<Path>> {
+    override fun showCanvasPaths(): MutableLiveData<MutableList<Path>> {
         return pathsLD
+    }
+    override fun showCanvasPaint(): MutableLiveData<MutableList<Paint>> {
+        return paintsLD
+    }
+
+    override fun settingPaint(settingPaintObject: SettingPaintObject):SettingPaintObject {
+       return settingPaint(settingPaintObject)
     }
 
 
     override fun clickBack(infoLayerCanvas: InfoLayerCanvas) {// назад по слоям
         activeLayer--
         activeLayerLD.value = activeLayer
-
     }
 
     override fun clickNext(infoLayerCanvas: InfoLayerCanvas) { //вперед по слоям
         activeLayer++
         activeLayerLD.value = activeLayer
-
     }
 
     override fun getInfoLayer(): MutableLiveData<Int> { //отслеживание переменной автивного слоя
@@ -77,6 +91,7 @@ object CanvasRepositoryImpl : CanvasRepository {
         drawingObject.value?.let {
             while (paths.size > it.infoLayer.activeLayerCanvas) {
                 paths.removeLast()
+                paints.removeLast()
             }
         }
     }
@@ -84,13 +99,14 @@ object CanvasRepositoryImpl : CanvasRepository {
     override fun cleanCanvas() {
         while (paths.size > 0) {
             paths.removeLast()
+            paints.removeLast()
         }
         activeLayer = 0
         activeLayerLD.value = activeLayer
-        Log.i("log", "${paths.size} слоев")
+
     }
 
-    override fun saveCanvas(onSizeChanged: OnSizeChanged) {
+    override fun saveCanvas(onSizeChanged: OnSizeChanged) { //запись в хранилище
         val myDir = File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), ""
         )
@@ -120,10 +136,10 @@ object CanvasRepositoryImpl : CanvasRepository {
             out.flush()
             out.close()//закрываем поток
         } catch (e: IOException) {
-            Log.i("log", "catch")
             e.printStackTrace()
         }
     }
+
 }
 
 

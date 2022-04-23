@@ -2,10 +2,9 @@ package com.example.canvas_for_drawing.presentation
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.res.Configuration
 import android.graphics.*
-import android.os.Environment
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
@@ -13,39 +12,39 @@ import androidx.lifecycle.MutableLiveData
 import com.example.canvas_for_drawing.domain.models.DrawingObject
 import com.example.canvas_for_drawing.domain.models.InfoLayerCanvas
 import com.example.canvas_for_drawing.domain.models.OnSizeChanged
+import com.example.canvas_for_drawing.domain.models.SettingPaintObject
 import kotlinx.coroutines.*
-import java.io.File
-import java.io.FileOutputStream
-import java.util.*
 
 
 class CustomSurfaceView @JvmOverloads constructor( //jvm помогает выбрать тот конструктор, который нужен
     context: Context?, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : SurfaceView(context, attrs, defStyleAttr), SurfaceHolder.Callback {
 
-
-
     var modelDrawingObjectLD =
-        MutableLiveData<DrawingObject>()//создание модели с координатами рисования и вида нажатий
+        MutableLiveData<DrawingObject>()//модель для передачи данных о рисовании в репозиторий
     var activeLayer = 0 //активный слой
-    var infoLayerCanvas = InfoLayerCanvas(0, activeLayer)
-    private val modelDrawingObject = DrawingObject(0F, 0F, 0, infoLayerCanvas)
-    var paths = mutableListOf<Path>() //слои
-    private var canvas: Canvas? = Canvas()
-    var onSizeChanged=OnSizeChanged()
-    var colorCanvas = Color.WHITE
-    private val paint: Paint = Paint(Paint.SUBPIXEL_TEXT_FLAG)
-    var painting=true
+    var infoLayerCanvas = InfoLayerCanvas(0, activeLayer)//часть модели modelDrawingObjectLD
+    var paintObject = SettingPaintObject(1f, Color.BLACK)//часть модели modelDrawingObjectLD
+    private val modelDrawingObject = DrawingObject(
+        0F, 0F, 0,
+        infoLayerCanvas, paintObject
+    )
+    var paths = mutableListOf<Path>() //слои объектов рисования
+    var paints = mutableListOf<Paint>() //слои кистей
+    private var canvas: Canvas? = Canvas() //создание холста
+    var onSizeChanged = OnSizeChanged()//модель передачи размером вью
+    var colorCanvas = Color.WHITE //default color
+    val paint: Paint = Paint(Paint.SUBPIXEL_TEXT_FLAG).apply { //default paint
+        style = Paint.Style.STROKE
+        strokeWidth = 10f
+        color = Color.BLACK
+    }
+    var painting = true//разрешение на рисование
 
     private val scope = CoroutineScope(Dispatchers.IO)
 
     init {
         holder.addCallback(this)
-        paint.apply { //default
-            style = Paint.Style.STROKE
-            strokeWidth = 10f
-            color = Color.BLACK
-        }
     }
 
     override fun surfaceCreated(p0: SurfaceHolder) {
@@ -94,7 +93,7 @@ class CustomSurfaceView @JvmOverloads constructor( //jvm помогает выб
         if (paths.isNotEmpty()) {
             var i = 1
             while (i <= activeLayer) {
-                canvas.drawPath(paths[i - 1], paint) //рисуем массив
+                canvas.drawPath(paths[i - 1], paints[i - 1]) //рисуем массив
                 i++
             }
         }
@@ -109,6 +108,9 @@ class CustomSurfaceView @JvmOverloads constructor( //jvm помогает выб
                 eventY = event.y
                 eventAction = event.action
                 infoLayer = infoLayerCanvas()
+                settingPaint = paintObject
+                Log.i("log", paintObject.strokeWidth.toString())
+                Log.i("log", paintObject.color.toString())
             }
     }
 
@@ -119,15 +121,17 @@ class CustomSurfaceView @JvmOverloads constructor( //jvm помогает выб
         }
         return this.infoLayerCanvas
     }
+
+    fun paint(settingPaintObject: SettingPaintObject): SettingPaintObject {
+        paintObject.apply {
+            strokeWidth = settingPaintObject.strokeWidth
+            color = settingPaintObject.color
+        }
+        return this.paintObject
+    }
+
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        onSizeChanged = OnSizeChanged(w,h,oldw,oldh)
-    }
-    fun getScreenOrientation(): String {//отслеживание ориентации
-        return when (resources.configuration.orientation) {
-            Configuration.ORIENTATION_PORTRAIT -> "portrait"
-            Configuration.ORIENTATION_LANDSCAPE -> "landscape"
-            else -> ""
-        }
+        onSizeChanged = OnSizeChanged(w, h, oldw, oldh)
     }
 }
