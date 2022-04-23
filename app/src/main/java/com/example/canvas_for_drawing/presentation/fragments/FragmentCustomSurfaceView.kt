@@ -52,7 +52,6 @@ class FragmentCustomSurfaceView : Fragment() {
         fun clickClean() { //метод отчистки экрана
             viewModel.cleanCanvas()
         }
-
         fun clickSave() { //метод отчистки экрана
             viewModel.saveCanvas(customSurfaceView.onSizeChanged)
         }
@@ -62,9 +61,8 @@ class FragmentCustomSurfaceView : Fragment() {
         fun clickNext(){ //метод клик вперед
             viewModel.clickNext(customSurfaceView.infoLayerCanvas)
         }
-        fun settingPaint(settingPaintObject: SettingPaintObject){
-           customSurfaceView.paint(settingPaintObject)
-
+        fun settingPaint(settingPaintObject: SettingPaintObject){//метод отправки данных о paint объекте из buttonFragment
+           viewModel.settingPaint(customSurfaceView.paint(settingPaintObject))
         }
     }
 

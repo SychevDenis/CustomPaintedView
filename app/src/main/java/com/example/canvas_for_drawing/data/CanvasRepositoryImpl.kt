@@ -68,8 +68,8 @@ object CanvasRepositoryImpl : CanvasRepository {
         return paintsLD
     }
 
-    override fun settingPaint(settingPaintObject: SettingPaintObject):SettingPaintObject {
-       return settingPaint(settingPaintObject)
+    override fun settingPaint(settingPaintObject: SettingPaintObject) {
+        //пока что не обязательный метод
     }
 
 
@@ -116,17 +116,13 @@ object CanvasRepositoryImpl : CanvasRepository {
             val file = File(myDir, filename)
             val bitmap = Bitmap.createBitmap(onSizeChanged.w, onSizeChanged.h, Bitmap.Config.ARGB_8888)
             val paint: Paint = Paint(Paint.SUBPIXEL_TEXT_FLAG)
-            paint.apply { //default
-                style = Paint.Style.STROKE
-                strokeWidth = 10f
-                color = Color.BLACK
-            }
+
             bitmap.applyCanvas {
                 if (paths.isNotEmpty()) {
                     var i = 1
                     this.drawColor(Color.WHITE)
                     while (i <= activeLayer) {
-                        this.drawPath(paths[i - 1], paint) //рисуем массив
+                        this.drawPath(paths[i - 1], paints[i-1]) //рисуем массив
                         i++
                     }
                 }

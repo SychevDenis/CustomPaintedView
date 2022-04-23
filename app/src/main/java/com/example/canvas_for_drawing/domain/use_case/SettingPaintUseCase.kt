@@ -5,7 +5,7 @@ import com.example.canvas_for_drawing.domain.models.SettingPaintObject
 
 
 class SettingPaintUseCase(private val canvasRepository: CanvasRepository) {
-    fun settingPaint(settingPaintObject: SettingPaintObject) : SettingPaintObject {
+    fun settingPaint(settingPaintObject: SettingPaintObject) {
        return canvasRepository.settingPaint(settingPaintObject)
     }
 

@@ -21,5 +21,5 @@ interface CanvasRepository {
     fun cleanCanvas()
     fun saveCanvas(onSizeChanged: OnSizeChanged)
     fun showCanvasPaint(): MutableLiveData<MutableList<Paint>>
-    fun settingPaint(settingPaintObject: SettingPaintObject):SettingPaintObject
+    fun settingPaint(settingPaintObject: SettingPaintObject)
 }
