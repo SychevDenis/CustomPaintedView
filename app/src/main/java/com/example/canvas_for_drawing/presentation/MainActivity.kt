@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
                 clean()//очистить канвас
             }
             R.id.menuActivityButtonSaveImage -> {
-                save()//очистить канвас в jpg
+                save()//сохранить канвас в jpg
             }
         }
         return true
