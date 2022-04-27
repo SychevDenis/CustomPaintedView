@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        if (savedInstanceState == null) {
+        if (savedInstanceState == null) { //песли активность создана впервые, то делаем транзакцию
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_customSv_containerView, FragmentCustomSurfaceView())
                 .add(R.id.fragment_button_group, FragmentButtonGroup())
@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         FragmentCustomSurfaceView.clickBack()
     }
 
-    fun onClickNext() {//назад
+    fun onClickNext() {//вперед
         FragmentCustomSurfaceView.clickNext()
     }
     fun settingPaint(settingPaintObject: SettingPaintObject){//размер кисти
