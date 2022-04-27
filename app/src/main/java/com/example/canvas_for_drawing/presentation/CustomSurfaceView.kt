@@ -76,7 +76,7 @@ class CustomSurfaceView @JvmOverloads constructor( //jvm помогает выб
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         when (event?.action) {
-            MotionEvent.ACTION_DOWN -> {//переходим на следующий слой
+            MotionEvent.ACTION_DOWN -> {
                 creatingModelDrawingObjectLD(event)
             }
             MotionEvent.ACTION_MOVE -> {
