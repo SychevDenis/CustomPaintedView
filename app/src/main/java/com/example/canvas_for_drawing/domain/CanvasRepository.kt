@@ -22,4 +22,6 @@ interface CanvasRepository {
                    activeLayer:Int):Boolean
     fun setSizeChanged(onSizeChanged: OnSizeChanged):OnSizeChanged
     fun setProgressSeekBar(progress: Int):Int
+
+    fun addColorInBar():Int
 }

@@ -48,6 +48,11 @@ class CanvasRepositoryImpl(
         //   settingPaintObjectLD.value?.strokeWidth = progress.toFloat() ?: 10f
     }
 
+    override fun addColorInBar(): Int {
+        return 0
+    }
+
+
     override fun backLayers(activeLayer:Int):Int {// назад по слоям
        return backLayer.backLayer(activeLayer)
     }

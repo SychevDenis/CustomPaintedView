@@ -34,7 +34,7 @@ class ViewModelCSV @Inject constructor(
     val colorBackgroundCanvasLD = MutableLiveData(Color.WHITE) //стандартный цвет фона
     val pairLD = MutableLiveData(Pair())
     val activeLayerLD = MutableLiveData(FIRST_LAYER)//активный слой
-    private var lastAction=NONE //последнее выполненное действие
+    private var lastAction = NONE //последнее выполненное действие
     private var onSizeChanged = OnSizeChanged()//размеры customSurfaceView
     private var vmStrokeWidth = 10f
     private var colorStroke = Color.BLACK
@@ -69,12 +69,13 @@ class ViewModelCSV @Inject constructor(
 
     fun clearCanvas() {//очистить холст
         //если предыдущее действие было не отчистка экрана
-        if (lastAction!=CLEAN_CANVAS) {
+        if (lastAction != CLEAN_CANVAS) {
             lastAction = CLEAN_CANVAS
             val pair = getPairValue()
             val backColor = getColorBack()
             creatingNewThread() //начинаем ветку с активного слоя
-            val cleanerPair = clearCanvasUseCase.clearCanvas(pair, onSizeChanged, backColor) as Pair?
+            val cleanerPair =
+                clearCanvasUseCase.clearCanvas(pair, onSizeChanged, backColor) as Pair?
 
             setPairValue(cleanerPair)
             nextLayers()
@@ -105,8 +106,10 @@ class ViewModelCSV @Inject constructor(
     fun paint(drawingObject: DrawingObject) {//рисуем объект
         lastAction = PAINT
         //добавляем данные о ширине и цвете кисти
-        drawingObject.let { it.strokeWidth = vmStrokeWidth
-            it.color = colorStroke }
+        drawingObject.let {
+            it.strokeWidth = vmStrokeWidth
+            it.color = colorStroke
+        }
         if (drawingObject.eventAction == ACTION_DOWN) { //если тач был нажат
             paintMoveTo(drawingObject)
         } else {
@@ -135,10 +138,12 @@ class ViewModelCSV @Inject constructor(
     ): Pair {
         pairLD.value?.let { pairLD.value = it; return it } ?: return Pair()
     }
-    private fun setPairValue(pair:Pair?) //читаем PairList
-     {
-        if (pair!=null)
-        pairLD.value=pair
+
+    private fun setPairValue(pair: Pair?) //читаем PairList
+    {
+        if (pair != null) {
+            pairLD.value = pair
+        }
     }
 
     private fun creatingNewThread() { //создание новой ветки истории рисования
@@ -158,9 +163,9 @@ class ViewModelCSV @Inject constructor(
         private const val ACTION_MOVE = 2
 
         //список последний действий с изображением
-        private const val NONE=0  //ничего
-        private const val PAINT=1 //было выполнено рисование
-        private const val CLEAN_CANVAS=2 //был очищен экран
-        private const val BACK_LAYER=3 //шаг назад по слоям
+        private const val NONE = 0  //ничего
+        private const val PAINT = 1 //было выполнено рисование
+        private const val CLEAN_CANVAS = 2 //был очищен экран
+        private const val BACK_LAYER = 3 //шаг назад по слоям
     }
 }
