@@ -2,21 +2,14 @@ package com.example.canvas_for_drawing.presentation
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.graphics.Paint
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.View.inflate
-import android.view.ViewGroup
-import android.view.ViewParent
-import android.widget.Button
-import android.widget.FrameLayout
 import android.widget.GridLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -24,16 +17,15 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import com.example.canvas_for_drawing.R
 import com.example.canvas_for_drawing.di.DaggerComponentActivity
+
 import com.example.canvas_for_drawing.presentation.fragments.FragmentButtonGroup
 import com.example.canvas_for_drawing.presentation.fragments.FragmentCustomSurfaceView
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var gridLayout: GridLayout
-    private lateinit var viewColor: View
-    private lateinit var inflater: LayoutInflater
     private lateinit var fragmentCustomSurfaceView: FragmentCustomSurfaceView
+    private lateinit var gridLayout: GridLayout
     //private lateinit var fragmentButtonGroup: FragmentButtonGroup
 
     @Inject
@@ -50,40 +42,48 @@ class MainActivity : AppCompatActivity() {
         DaggerComponentActivity.create().inject(this)
     }
 
-
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        inflater = LayoutInflater.from(this)
-        gridLayout = findViewById(R.id.gridView)
-        //addNewViewColor(Color.RED,inflater,gridLayout)
-
-
         if (savedInstanceState == null) { //если активность создана впервые, то делаем транзакцию
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_customSv_containerView, FragmentCustomSurfaceView())
                 .replace(R.id.fragment_button_group, FragmentButtonGroup())
                 .commit()
         }
-        viewModelCSV //инициализируем
-        viewModelMainActivity //инициализируем
+        gridLayout = findViewById(R.id.gridView)
+        initViewModels()//инициализируем вью модели
+        viewModelObserve()//подписываемся на обновления
     }
 
-    private fun addNewViewColor(color: Int,inflater: LayoutInflater,gridLayout:ViewGroup): ViewGroup {
-        val frameLayout = inflater.inflate(R.layout.item_color_rv, null)
-        val viewColor: View = frameLayout.findViewById(R.id.viewColor)
-        val colorDrawable = ColorDrawable(color)
-        viewColor.background=colorDrawable
-        gridLayout.addView(frameLayout)
-        return gridLayout
+    private fun viewModelObserve() {
+        viewModelMainActivity.listViewColor.observe(this) {
+            gridLayout.removeAllViews()
+            for (color in it) {
+                val frameLayout = LayoutInflater.from(this).inflate(R.layout.item_color_rv, null)
+                val viewColor: View = frameLayout.findViewById(R.id.viewColor)
+                viewColor.background = ColorDrawable(color)
+                gridLayout.addView(frameLayout)
+            }
+        }
+        viewModelMainActivity.visible.observe(this){
+            gridLayout.isVisible=it
+        }
     }
+
+    private fun initViewModels() {
+        //сюда вносятся вьюмодели, требующие инициализации
+        viewModelCSV
+        viewModelMainActivity
+    }
+
 
     override fun onResume() {
         super.onResume()
         fragmentCustomSurfaceView = supportFragmentManager
             .findFragmentById(R.id.fragment_customSv_containerView) as FragmentCustomSurfaceView
-//        fragmentButtonGroup = supportFragmentManager
+    //        fragmentButtonGroup = supportFragmentManager
 //            .findFragmentById(R.id.fragment_button_group) as FragmentButtonGroup
 
     }
@@ -94,7 +94,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean { //кнопки меню
-
         when (item.itemId) {
             R.id.menuActivityButtonClean -> {
                 viewModelCSV.clearCanvas()
@@ -102,7 +101,6 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.menuActivityButtonPalette -> {
-                viewModelCSV.setColorBack(Color.RED)
 //                    ?: run {
 //                        throw Exception("fragmentCustomSurfaceView is null")
 //                    }

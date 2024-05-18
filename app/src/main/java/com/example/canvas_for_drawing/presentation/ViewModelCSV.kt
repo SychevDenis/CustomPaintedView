@@ -1,23 +1,20 @@
 package com.example.canvas_for_drawing.presentation
 
 import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Path
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.canvas_for_drawing.data.data_methods.CreatingNewThread
 import com.example.canvas_for_drawing.domain.models.Pair
 import com.example.canvas_for_drawing.domain.models.DrawingObject
 import com.example.canvas_for_drawing.domain.models.OnSizeChanged
-import com.example.canvas_for_drawing.domain.use_case.BackLayerUseCase
-import com.example.canvas_for_drawing.domain.use_case.ClearCanvasUseCase
-import com.example.canvas_for_drawing.domain.use_case.CreatingNewThreadUseCases
-import com.example.canvas_for_drawing.domain.use_case.NextLayerUseCase
-import com.example.canvas_for_drawing.domain.use_case.PaintUseCase
-import com.example.canvas_for_drawing.domain.use_case.SaveCanvasUseCase
-import com.example.canvas_for_drawing.domain.use_case.SetColorBackgroundUseCase
-import com.example.canvas_for_drawing.domain.use_case.SetProgressSeekBarUseCase
-import com.example.canvas_for_drawing.domain.use_case.SetSizeChanged
+import com.example.canvas_for_drawing.domain.use_case.custom_surface_view.BackLayerUseCase
+import com.example.canvas_for_drawing.domain.use_case.custom_surface_view.ClearCanvasUseCase
+import com.example.canvas_for_drawing.domain.use_case.custom_surface_view.CreatingNewThreadUseCases
+import com.example.canvas_for_drawing.domain.use_case.custom_surface_view.NextLayerUseCase
+import com.example.canvas_for_drawing.domain.use_case.custom_surface_view.PaintUseCase
+import com.example.canvas_for_drawing.domain.use_case.custom_surface_view.SaveCanvasUseCase
+import com.example.canvas_for_drawing.domain.use_case.custom_surface_view.SetColorBackgroundUseCase
+import com.example.canvas_for_drawing.domain.use_case.custom_surface_view.SetProgressSeekBarUseCase
+import com.example.canvas_for_drawing.domain.use_case.custom_surface_view.SetSizeChanged
 import javax.inject.Inject
 
 class ViewModelCSV @Inject constructor(
