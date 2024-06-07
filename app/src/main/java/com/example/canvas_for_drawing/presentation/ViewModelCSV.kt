@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.example.canvas_for_drawing.domain.models.Pair
 import com.example.canvas_for_drawing.domain.models.DrawingObject
 import com.example.canvas_for_drawing.domain.models.OnSizeChanged
+import com.example.canvas_for_drawing.domain.use_case.color_use_cases.SetColorStrokeUseCases
 import com.example.canvas_for_drawing.domain.use_case.custom_surface_view.BackLayerUseCase
 import com.example.canvas_for_drawing.domain.use_case.custom_surface_view.ClearCanvasUseCase
 import com.example.canvas_for_drawing.domain.use_case.custom_surface_view.CreatingNewThreadUseCases
@@ -26,7 +27,8 @@ class ViewModelCSV @Inject constructor(
     private val setSizeChangedUseCase: SetSizeChanged,
     private val paintUseCase: PaintUseCase,
     private val saveCanvas: SaveCanvasUseCase,
-    private val creatingNewThreadUseCases: CreatingNewThreadUseCases
+    private val creatingNewThreadUseCases: CreatingNewThreadUseCases,
+    private val setColorStrokeUseCases: SetColorStrokeUseCases,
 ) : ViewModel() {
     val colorBackgroundCanvasLD = MutableLiveData(Color.WHITE) //стандартный цвет фона
     val pairLD = MutableLiveData(Pair())
@@ -39,6 +41,10 @@ class ViewModelCSV @Inject constructor(
 
     private fun getActiveLayer(): Int {
         activeLayerLD.value?.let { return it } ?: return 0
+    }
+
+    fun setColorStroke(color: Int) {
+        colorStroke = setColorStrokeUseCases.setColorStroke(color)
     }
 
     private fun setActiveLayer(it: Int) {

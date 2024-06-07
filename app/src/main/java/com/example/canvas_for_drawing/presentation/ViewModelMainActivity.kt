@@ -1,5 +1,6 @@
 package com.example.canvas_for_drawing.presentation
 
+import android.graphics.Color
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.canvas_for_drawing.domain.use_case.color_use_cases.AddColorInBarUseCases
@@ -11,20 +12,31 @@ class ViewModelMainActivity @Inject constructor(
     private val removeColorInBarUseCases: RemoveColorInBarUseCases
 ) : ViewModel() {
     var listViewColor = MutableLiveData(mutableListOf<Int>())
-    var visible = MutableLiveData(true)
+    var visible = MutableLiveData(false)
 
+    init {
+        //добавляем все нужные цвета в палитру
+        addColor(Color.RED)
+        addColor(Color.GREEN)
+        addColor(Color.BLUE)
+        addColor(Color.LTGRAY)
+        addColor(Color.MAGENTA)
+        addColor(Color.YELLOW)
+        addColor(Color.BLACK)
+        addColor(Color.WHITE)
+    }
     fun addColor(color: Int): Boolean {
         val oldList = getListViewColor()
         val newList = addColorInBarUseCases.addColor(color, oldList, maxLength)
         setListViewColor(newList)
-        return oldList != newList
+        return oldList != newList //если цвет добавлен, возвращаем true, иначе false
     }
 
     fun removeColor(): Boolean {
         val oldList = getListViewColor()
         val newList = removeColorInBarUseCases.removeColor(oldList)
         setListViewColor(newList)
-        return oldList != newList
+        return oldList != newList //если цвет удален, возвращаем true, иначе false
     }
 
     private fun getVisible(): Boolean {

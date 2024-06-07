@@ -1,9 +1,7 @@
 package com.example.canvas_for_drawing.presentation
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -17,7 +15,6 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import com.example.canvas_for_drawing.R
 import com.example.canvas_for_drawing.di.DaggerComponentActivity
-
 import com.example.canvas_for_drawing.presentation.fragments.FragmentButtonGroup
 import com.example.canvas_for_drawing.presentation.fragments.FragmentCustomSurfaceView
 import javax.inject.Inject
@@ -42,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         DaggerComponentActivity.create().inject(this)
     }
 
-    @SuppressLint("MissingInflatedId")
+    // @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -63,12 +60,15 @@ class MainActivity : AppCompatActivity() {
             for (color in it) {
                 val frameLayout = LayoutInflater.from(this).inflate(R.layout.item_color_rv, null)
                 val viewColor: View = frameLayout.findViewById(R.id.viewColor)
+                viewColor.setOnClickListener{ view-> //установка слушателя на все цвета палитры
+                    viewModelCSV.setColorStroke(color)
+                }
                 viewColor.background = ColorDrawable(color)
                 gridLayout.addView(frameLayout)
             }
         }
-        viewModelMainActivity.visible.observe(this){
-            gridLayout.isVisible=it
+        viewModelMainActivity.visible.observe(this) {
+            gridLayout.isVisible = it
         }
     }
 
@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         fragmentCustomSurfaceView = supportFragmentManager
             .findFragmentById(R.id.fragment_customSv_containerView) as FragmentCustomSurfaceView
-    //        fragmentButtonGroup = supportFragmentManager
+        //        fragmentButtonGroup = supportFragmentManager
 //            .findFragmentById(R.id.fragment_button_group) as FragmentButtonGroup
 
     }
@@ -101,6 +101,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.menuActivityButtonPalette -> {
+                viewModelMainActivity.reversVisible()
 //                    ?: run {
 //                        throw Exception("fragmentCustomSurfaceView is null")
 //                    }
