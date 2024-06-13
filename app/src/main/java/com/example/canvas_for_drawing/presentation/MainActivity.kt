@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.GridLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -20,16 +22,19 @@ import com.example.canvas_for_drawing.presentation.fragments.FragmentButtonGroup
 import com.example.canvas_for_drawing.presentation.fragments.FragmentCustomSurfaceView
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), Animation.AnimationListener {
 
     private lateinit var fragmentCustomSurfaceView: FragmentCustomSurfaceView
 
     private lateinit var gridLayout: GridLayout
     //private lateinit var fragmentButtonGroup: FragmentButtonGroup
 
+    private lateinit var inAnimator: Animation
+    private lateinit var outAnimator: Animation
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+
     private val viewModelCSV by lazy { //получение view model через фабрику
         ViewModelProvider(this, viewModelFactory)[ViewModelCSV::class.java]
     }
@@ -44,13 +49,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
-    init {
-        //отправляем объект фрагмента в dagger2
-        DaggerComponentActivity.create().inject(this)
-    }
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -60,9 +58,14 @@ class MainActivity : AppCompatActivity() {
                 .replace(R.id.fragment_button_group, FragmentButtonGroup())
                 .commit()
         }
-
+        inAnimator = AnimationUtils.loadAnimation(this, R.anim.alpha_in)
+        outAnimator = AnimationUtils.loadAnimation(this, R.anim.alpha_out)
         gridLayout = findViewById(R.id.gridView)
         initViewModels()//инициализируем вью модели
+
+        outAnimator.setAnimationListener(this)
+        inAnimator.setAnimationListener(this)
+
         viewModelObserve()//подписываемся на обновления
     }
 
@@ -72,7 +75,7 @@ class MainActivity : AppCompatActivity() {
             for (color in it) {
                 val frameLayout = LayoutInflater.from(this).inflate(R.layout.item_color_rv, null)
                 val viewColor: View = frameLayout.findViewById(R.id.viewColor)
-                viewColor.setOnClickListener{ view-> //установка слушателя на все цвета палитры
+                viewColor.setOnClickListener { view -> //установка слушателя на все цвета палитры
                     viewModelCSV.setColorStroke(color)
                 }
                 viewColor.background = ColorDrawable(color)
@@ -80,6 +83,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
         viewModelMainActivity.visible.observe(this) {
+            if (it) gridLayout.startAnimation(inAnimator)
+            else gridLayout.startAnimation(outAnimator)
             gridLayout.isVisible = it
         }
     }
@@ -112,7 +117,6 @@ class MainActivity : AppCompatActivity() {
 
             R.id.menuActivityButtonPalette -> {
                 viewModelMainActivity.reversVisible()
-
             }
 
             R.id.menuActivityButtonSaveImage -> {
@@ -152,6 +156,17 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    override fun onAnimationStart(animation: Animation?) {
+        println("FragmentBG start animation ${animation.toString()}")
+    }
+
+    override fun onAnimationEnd(animation: Animation?) {
+        println("FragmentBG end animation ${animation.toString()}")
+    }
+
+    override fun onAnimationRepeat(animation: Animation?) {
+
+    }
 
 }
 

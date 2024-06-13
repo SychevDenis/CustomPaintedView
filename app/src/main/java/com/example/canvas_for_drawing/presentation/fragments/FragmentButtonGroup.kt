@@ -16,7 +16,7 @@ import androidx.fragment.app.activityViewModels
 import com.example.canvas_for_drawing.R
 import com.example.canvas_for_drawing.presentation.ViewModelCSV
 
-class FragmentButtonGroup() : Fragment(), Animation.AnimationListener {
+class FragmentButtonGroup() : Fragment() {
 
 
     private val viewModelCSV: ViewModelCSV by activityViewModels()//нужно искать способ вставить
@@ -28,8 +28,7 @@ class FragmentButtonGroup() : Fragment(), Animation.AnimationListener {
     private lateinit var seek: SeekBar
 
 
-    private lateinit var inAnimator: Animation
-    private lateinit var outAnimator: Animation
+
 
 
     override fun onCreateView(
@@ -46,16 +45,15 @@ class FragmentButtonGroup() : Fragment(), Animation.AnimationListener {
     }
 
     private fun setListener() {//подключаем все слушатели
-        outAnimator.setAnimationListener(this)
-        inAnimator.setAnimationListener(this)
+
 
         buttonBack.setOnClickListener() {
-            //  it.startAnimation(outAnimator)
+
             viewModelCSV.backLayers()
         }
 
         buttonNext.setOnClickListener() {
-            //    it.startAnimation(inAnimator)
+
             viewModelCSV.nextLayers()
         }
 
@@ -85,19 +83,8 @@ class FragmentButtonGroup() : Fragment(), Animation.AnimationListener {
         buttonBack = view.findViewById(R.id.button_back)
         buttonNext = view.findViewById(R.id.button_next)
         textView = view.findViewById(R.id.textViewProgress)
-        inAnimator = AnimationUtils.loadAnimation(view.context, R.anim.alpha_in)
-        outAnimator = AnimationUtils.loadAnimation(view.context, R.anim.alpha_out)
-    }
-
-    override fun onAnimationStart(animation: Animation?) {
-        println("FragmentBG start animation ${animation.toString()}")
-    }
-
-    override fun onAnimationEnd(animation: Animation?) {
-        println("FragmentBG end animation ${animation.toString()}")
-    }
-
-    override fun onAnimationRepeat(animation: Animation?) {
 
     }
+
+
 }
