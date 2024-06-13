@@ -1,11 +1,10 @@
 package com.example.canvas_for_drawing.data.data_methods
 
-import android.graphics.Paint
+import com.example.canvas_for_drawing.data.data_methods_custom_surfave_view.CreatingNewThread
 import com.example.canvas_for_drawing.domain.models.Pair
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import javax.inject.Inject
-import kotlin.io.path.Path
 
 class CreatingNewThreadUnitTest @Inject constructor() {
     @Test
