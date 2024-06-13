@@ -1,4 +1,4 @@
-package com.example.canvas_for_drawing.domain
+package com.example.canvas_for_drawing.domain.repository_interfaces
 
 import android.graphics.Paint
 import android.graphics.Path
@@ -7,7 +7,7 @@ import com.example.canvas_for_drawing.domain.models.OnSizeChanged
 import com.example.canvas_for_drawing.domain.models.Pair
 
 
-interface CanvasRepository {
+interface CanvasRepositoryCustomSurfaceView {
     fun setColorBackground(color:Int):Int //установка цвета фона в custom view
     fun paintMoveTo(drawingObject: DrawingObject, pair: Pair):Pair
     fun paintLineTo(drawingObject: DrawingObject, pair:Pair):Pair
@@ -21,4 +21,5 @@ interface CanvasRepository {
                     activeLayer: Int):Boolean
     fun setSizeChanged(onSizeChanged: OnSizeChanged):OnSizeChanged
     fun setProgressSeekBar(progress: Int):Int
+
 }

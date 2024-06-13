@@ -1,7 +1,7 @@
-package com.example.canvas_for_drawing.di
+package com.example.canvas_for_drawing.di.modules
 
 import com.example.canvas_for_drawing.data.data_methods_custom_surfave_view.BackLayer
-import com.example.canvas_for_drawing.data.CanvasRepositoryImpl
+import com.example.canvas_for_drawing.data.repositors.CanvasRepositoryImplCustomSurfaceView
 import com.example.canvas_for_drawing.data.data_methods_custom_surfave_view.ClearCanvas
 import com.example.canvas_for_drawing.data.data_methods_custom_surfave_view.CreatingNewThread
 import com.example.canvas_for_drawing.data.data_methods_custom_surfave_view.NextLayer
@@ -9,12 +9,12 @@ import com.example.canvas_for_drawing.data.data_methods_custom_surfave_view.Pain
 import com.example.canvas_for_drawing.data.data_methods_custom_surfave_view.PaintMoveTo
 import com.example.canvas_for_drawing.data.data_methods_custom_surfave_view.SaveBitmap
 import com.example.canvas_for_drawing.data.data_methods_custom_surfave_view.SetSizeChanged
-import com.example.canvas_for_drawing.domain.CanvasRepository
+import com.example.canvas_for_drawing.domain.repository_interfaces.CanvasRepositoryCustomSurfaceView
 import dagger.Module
 import dagger.Provides
 
 @Module
-class ModuleCanvasRepositoryImpl {
+class ModuleCanvasRepositoryImplCustomSurfaceView {
     @Provides
     fun provideRepositoryImpl(
         saveBitmap: SaveBitmap,
@@ -24,9 +24,9 @@ class ModuleCanvasRepositoryImpl {
         pathLineTo: PaintLineTo,
         pathMoveTo: PaintMoveTo,
         creatingNewThread: CreatingNewThread,
-        clearCanvas: ClearCanvas
-    ): CanvasRepository {
-        return CanvasRepositoryImpl(
+        clearCanvas: ClearCanvas,
+    ): CanvasRepositoryCustomSurfaceView {
+        return CanvasRepositoryImplCustomSurfaceView(
             saveBitmap,
             setSizeChanged,
             backLayer,
@@ -34,7 +34,7 @@ class ModuleCanvasRepositoryImpl {
             pathLineTo,
             pathMoveTo,
             creatingNewThread,
-            clearCanvas
+            clearCanvas,
         )
     }
 }

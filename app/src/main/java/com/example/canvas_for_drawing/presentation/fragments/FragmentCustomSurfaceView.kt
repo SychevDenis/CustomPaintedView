@@ -53,8 +53,10 @@ class FragmentCustomSurfaceView() : Fragment(),
         }
         //обновление рисунка
         viewModelCSV.pairLD.observe(viewLifecycleOwner) {
+
             val listPath = it.getListPath() as? MutableList<Path> ?: return@observe
             val listPaint = it.getListPaint() as? MutableList<Paint> ?: return@observe
+
             customSurfaceView.setPathAndPaint(listPath, listPaint)
         }
     }

@@ -4,6 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+
 import android.widget.Button
 import android.widget.SeekBar
 import android.widget.TextView
@@ -12,8 +16,8 @@ import androidx.fragment.app.activityViewModels
 import com.example.canvas_for_drawing.R
 import com.example.canvas_for_drawing.presentation.ViewModelCSV
 
-
 class FragmentButtonGroup() : Fragment() {
+
 
     private val viewModelCSV: ViewModelCSV by activityViewModels()//нужно искать способ вставить
     //это через инъекцию, но я пока не знаю как
@@ -22,6 +26,10 @@ class FragmentButtonGroup() : Fragment() {
     private lateinit var buttonNext: Button
     private lateinit var textView: TextView
     private lateinit var seek: SeekBar
+
+
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,16 +40,23 @@ class FragmentButtonGroup() : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        seek = view.findViewById(R.id.seekBar)
-        buttonBack = view.findViewById(R.id.button_back)
-        buttonNext = view.findViewById(R.id.button_next)
-        textView = view.findViewById(R.id.textViewProgress)
+        initVariables(view)//инициализация всех вью
+        setListener()
+    }
+
+    private fun setListener() {//подключаем все слушатели
+
+
         buttonBack.setOnClickListener() {
+
             viewModelCSV.backLayers()
         }
+
         buttonNext.setOnClickListener() {
+
             viewModelCSV.nextLayers()
         }
+
         seek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(p0: SeekBar?, progress: Int, p2: Boolean) {
                 setBrushSize(progress)
@@ -62,5 +77,14 @@ class FragmentButtonGroup() : Fragment() {
     fun setBrushSize(progress: Int) {
         viewModelCSV.setProgressSeekBar(progress)
     }
+
+    private fun initVariables(view: View) { //инициализация переменных
+        seek = view.findViewById(R.id.seekBar)
+        buttonBack = view.findViewById(R.id.button_back)
+        buttonNext = view.findViewById(R.id.button_next)
+        textView = view.findViewById(R.id.textViewProgress)
+
+    }
+
 
 }

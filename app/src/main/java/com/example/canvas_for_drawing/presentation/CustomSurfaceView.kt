@@ -118,11 +118,11 @@ class CustomSurfaceView @JvmOverloads constructor(//jvm помогает выб�
         this.pathList = pathList
         this.paintList = paintList
     }
-    fun setPath(pathList: MutableList<Path>) {
+    private fun setPath(pathList: MutableList<Path>) {
         this.pathList = pathList
     }
 
-    fun setPaint(paintList: MutableList<Paint>) {
+    private fun setPaint(paintList: MutableList<Paint>) {
         this.paintList = paintList
     }
 

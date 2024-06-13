@@ -1,23 +1,23 @@
 package com.example.canvas_for_drawing.presentation
 
 import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Path
+
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.canvas_for_drawing.data.data_methods.CreatingNewThread
 import com.example.canvas_for_drawing.domain.models.Pair
 import com.example.canvas_for_drawing.domain.models.DrawingObject
 import com.example.canvas_for_drawing.domain.models.OnSizeChanged
-import com.example.canvas_for_drawing.domain.use_case.BackLayerUseCase
-import com.example.canvas_for_drawing.domain.use_case.ClearCanvasUseCase
-import com.example.canvas_for_drawing.domain.use_case.CreatingNewThreadUseCases
-import com.example.canvas_for_drawing.domain.use_case.NextLayerUseCase
-import com.example.canvas_for_drawing.domain.use_case.PaintUseCase
-import com.example.canvas_for_drawing.domain.use_case.SaveCanvasUseCase
-import com.example.canvas_for_drawing.domain.use_case.SetColorBackgroundUseCase
-import com.example.canvas_for_drawing.domain.use_case.SetProgressSeekBarUseCase
-import com.example.canvas_for_drawing.domain.use_case.SetSizeChanged
+import com.example.canvas_for_drawing.domain.use_case.color_use_cases.SetColorStrokeUseCases
+import com.example.canvas_for_drawing.domain.use_case.custom_surface_view.BackLayerUseCase
+import com.example.canvas_for_drawing.domain.use_case.custom_surface_view.ClearCanvasUseCase
+import com.example.canvas_for_drawing.domain.use_case.custom_surface_view.CreatingNewThreadUseCases
+import com.example.canvas_for_drawing.domain.use_case.custom_surface_view.NextLayerUseCase
+import com.example.canvas_for_drawing.domain.use_case.custom_surface_view.PaintUseCase
+import com.example.canvas_for_drawing.domain.use_case.custom_surface_view.SaveCanvasUseCase
+import com.example.canvas_for_drawing.domain.use_case.custom_surface_view.SetColorBackgroundUseCase
+import com.example.canvas_for_drawing.domain.use_case.custom_surface_view.SetProgressSeekBarUseCase
+import com.example.canvas_for_drawing.domain.use_case.custom_surface_view.SetSizeChanged
+
 import javax.inject.Inject
 
 class ViewModelCSV @Inject constructor(
@@ -29,12 +29,18 @@ class ViewModelCSV @Inject constructor(
     private val setSizeChangedUseCase: SetSizeChanged,
     private val paintUseCase: PaintUseCase,
     private val saveCanvas: SaveCanvasUseCase,
-    private val creatingNewThreadUseCases: CreatingNewThreadUseCases
+
+    private val creatingNewThreadUseCases: CreatingNewThreadUseCases,
+    private val setColorStrokeUseCases: SetColorStrokeUseCases,
+
+
 ) : ViewModel() {
     val colorBackgroundCanvasLD = MutableLiveData(Color.WHITE) //стандартный цвет фона
     val pairLD = MutableLiveData(Pair())
     val activeLayerLD = MutableLiveData(FIRST_LAYER)//активный слой
+
     private var lastAction=NONE //последнее выполненное действие
+
     private var onSizeChanged = OnSizeChanged()//размеры customSurfaceView
     private var vmStrokeWidth = 10f
     private var colorStroke = Color.BLACK
@@ -43,6 +49,12 @@ class ViewModelCSV @Inject constructor(
     private fun getActiveLayer(): Int {
         activeLayerLD.value?.let { return it } ?: return 0
     }
+
+
+    fun setColorStroke(color: Int) {
+        colorStroke = setColorStrokeUseCases.setColorStroke(color)
+    }
+
 
     private fun setActiveLayer(it: Int) {
         activeLayerLD.value = it
@@ -69,6 +81,7 @@ class ViewModelCSV @Inject constructor(
 
     fun clearCanvas() {//очистить холст
         //если предыдущее действие было не отчистка экрана
+
         if (lastAction!=CLEAN_CANVAS) {
             lastAction = CLEAN_CANVAS
             val pair = getPairValue()
@@ -86,16 +99,14 @@ class ViewModelCSV @Inject constructor(
         this.onSizeChanged = setSizeChangedUseCase.setSizeChanged(onSizeChanged)
     }
 
-//    fun saveCanvas(): Boolean {
-//        pathListLD.value?.let {
-//            paintListLD.value?.let { it1 ->
-//                activeLayerLD.value?.let { it2 ->
-//                    return saveCanvas.saveCanvas(onSizeChanged, it, it1, it2)
-//                }
-//            }
-//        }
-//        return false
-//    }
+    fun saveCanvas(): Boolean {
+        pairLD.value?.let { pair ->
+                activeLayerLD.value?.let { activeLayer ->
+                    return saveCanvas.saveCanvas(onSizeChanged,pair,activeLayer)
+                }
+            }
+        return false
+    }
 
     fun setProgressSeekBar(progress: Int) { //установка ширины кисти
         vmStrokeWidth =
@@ -105,8 +116,13 @@ class ViewModelCSV @Inject constructor(
     fun paint(drawingObject: DrawingObject) {//рисуем объект
         lastAction = PAINT
         //добавляем данные о ширине и цвете кисти
-        drawingObject.let { it.strokeWidth = vmStrokeWidth
-            it.color = colorStroke }
+
+        drawingObject.let {
+            it.strokeWidth = vmStrokeWidth
+            it.color = colorStroke
+        }
+
+
         if (drawingObject.eventAction == ACTION_DOWN) { //если тач был нажат
             paintMoveTo(drawingObject)
         } else {
@@ -135,12 +151,14 @@ class ViewModelCSV @Inject constructor(
     ): Pair {
         pairLD.value?.let { pairLD.value = it; return it } ?: return Pair()
     }
-    private fun setPairValue(pair:Pair?) //читаем PairList
-     {
-        if (pair!=null)
-        pairLD.value=pair
-    }
 
+
+    private fun setPairValue(pair: Pair?) //читаем PairList
+    {
+        if (pair != null) {
+            pairLD.value = pair
+        }
+    }
     private fun creatingNewThread() { //создание новой ветки истории рисования
         creatingNewThreadUseCases.create(getPairValue(), getActiveLayer())
     }
@@ -158,6 +176,7 @@ class ViewModelCSV @Inject constructor(
         private const val ACTION_MOVE = 2
 
         //список последний действий с изображением
+
         private const val NONE=0  //ничего
         private const val PAINT=1 //было выполнено рисование
         private const val CLEAN_CANVAS=2 //был очищен экран

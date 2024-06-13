@@ -1,4 +1,4 @@
-package com.example.canvas_for_drawing.data.data_methods
+package com.example.canvas_for_drawing.data.data_methods_custom_surfave_view
 
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -7,6 +7,7 @@ import android.graphics.Path
 import android.os.Environment
 import androidx.core.graphics.applyCanvas
 import com.example.canvas_for_drawing.domain.models.OnSizeChanged
+import com.example.canvas_for_drawing.domain.models.Pair
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -15,8 +16,7 @@ import javax.inject.Inject
 class SaveBitmap @Inject constructor() {
     fun save(
         onSizeChanged: OnSizeChanged,
-        pathList: MutableList<Path>,
-        paintList: MutableList<Paint>,
+        pair:Pair,
         activeLayer: Int
     ): Boolean {
         val myDir = File( //объявляем каталог
@@ -37,8 +37,10 @@ class SaveBitmap @Inject constructor() {
                 Bitmap.Config.ARGB_8888
             )
         bitmap.applyCanvas {//формируем изображение для сохранения
-            if (pathList.isNotEmpty() && pathList.size == paintList.size) {
+            if (pair.getListSize()>0) {
                 var i = 1
+                val pathList=pair.getListPath() as List<Path>
+                val paintList=pair.getListPaint() as List<Paint>
                 this.drawColor(Color.WHITE)
                 while (i <= activeLayer) {
                     this.drawPath(pathList[i - 1], paintList[i - 1]) //рисуем массив
