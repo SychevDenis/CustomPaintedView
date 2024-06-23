@@ -38,11 +38,12 @@ class ViewModelCSV @Inject constructor(
     val colorBackgroundCanvasLD = MutableLiveData(Color.WHITE) //стандартный цвет фона
     val pairLD = MutableLiveData(Pair())
     val activeLayerLD = MutableLiveData(FIRST_LAYER)//активный слой
-
+    var vmStrokeWidth = MutableLiveData(10f)//ширина кисти
+    var visibleLinearLayoutWidthBrush = MutableLiveData(false)//ширина кисти
     private var lastAction=NONE //последнее выполненное действие
 
     private var onSizeChanged = OnSizeChanged()//размеры customSurfaceView
-    private var vmStrokeWidth = 10f
+
     private var colorStroke = Color.BLACK
 
 
@@ -109,7 +110,7 @@ class ViewModelCSV @Inject constructor(
     }
 
     fun setProgressSeekBar(progress: Int) { //установка ширины кисти
-        vmStrokeWidth =
+        vmStrokeWidth.value=
             setProgressSeekBarUseCase.setProgressSeekBar(progress).toFloat() ?: 10f
     }
 
@@ -118,10 +119,9 @@ class ViewModelCSV @Inject constructor(
         //добавляем данные о ширине и цвете кисти
 
         drawingObject.let {
-            it.strokeWidth = vmStrokeWidth
+            it.strokeWidth = vmStrokeWidth.value?: 10f
             it.color = colorStroke
         }
-
 
         if (drawingObject.eventAction == ACTION_DOWN) { //если тач был нажат
             paintMoveTo(drawingObject)
