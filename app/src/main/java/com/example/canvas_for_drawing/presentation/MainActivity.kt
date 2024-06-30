@@ -2,6 +2,7 @@ package com.example.canvas_for_drawing.presentation
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -22,18 +23,16 @@ import com.example.canvas_for_drawing.presentation.fragments.FragmentButtonGroup
 import com.example.canvas_for_drawing.presentation.fragments.FragmentCustomSurfaceView
 import javax.inject.Inject
 
+
 class MainActivity : AppCompatActivity(), Animation.AnimationListener {
-
-    private lateinit var fragmentCustomSurfaceView: FragmentCustomSurfaceView
-
-    private lateinit var gridLayout: GridLayout
-    //private lateinit var fragmentButtonGroup: FragmentButtonGroup
-
-    private lateinit var inAnimator: Animation
-    private lateinit var outAnimator: Animation
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+
+    private lateinit var fragmentCustomSurfaceView: FragmentCustomSurfaceView
+    private lateinit var gridLayout: GridLayout
+    private lateinit var inAnimator: Animation
+    private lateinit var outAnimator: Animation
 
     private val viewModelCSV by lazy { //получение view model через фабрику
         ViewModelProvider(this, viewModelFactory)[ViewModelCSV::class.java]
@@ -52,21 +51,51 @@ class MainActivity : AppCompatActivity(), Animation.AnimationListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        settingToolBar()//установки tool bar
+        settingNavigationBar() //установки navigation bar
+        initFragments(savedInstanceState)//инициализация фрагментов
+        initObjectsAndView()//инициализация объектов и view
+        viewModelObserve()//подписываемся на обновления
+    }
+
+    private fun settingNavigationBar() {
+        //прячем navigation bar
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
+                View.SYSTEM_UI_FLAG_FULLSCREEN
+    }
+
+    private fun settingToolBar() {
+        supportActionBar?.setBackgroundDrawable(
+            ColorDrawable
+                (Color.parseColor("#FF0000"))
+        )
+        supportActionBar?.title = "Paint"
+    }
+
+    private fun initObjectsAndView() {
+        initViewModels()//инициализируем вью модели
+
+        inAnimator = AnimationUtils.loadAnimation(this, R.anim.alpha_in)
+        outAnimator = AnimationUtils.loadAnimation(this, R.anim.alpha_out)
+
+        gridLayout = findViewById(R.id.gridView)
+
+        outAnimator.setAnimationListener(this)
+        inAnimator.setAnimationListener(this)
+    }
+
+    private fun initFragments(savedInstanceState: Bundle?) {
         if (savedInstanceState == null) { //если активность создана впервые, то делаем транзакцию
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_customSv_containerView, FragmentCustomSurfaceView())
                 .replace(R.id.fragment_button_group, FragmentButtonGroup())
                 .commit()
         }
-        inAnimator = AnimationUtils.loadAnimation(this, R.anim.alpha_in)
-        outAnimator = AnimationUtils.loadAnimation(this, R.anim.alpha_out)
-        gridLayout = findViewById(R.id.gridView)
-        initViewModels()//инициализируем вью модели
+    }
 
-        outAnimator.setAnimationListener(this)
-        inAnimator.setAnimationListener(this)
-
-        viewModelObserve()//подписываемся на обновления
+    private fun initViewModels() { //сюда вносятся вьюмодели, требующие инициализации
+        viewModelCSV
+        viewModelMainActivity
     }
 
     private fun viewModelObserve() {
@@ -82,6 +111,7 @@ class MainActivity : AppCompatActivity(), Animation.AnimationListener {
                 gridLayout.addView(frameLayout)
             }
         }
+
         viewModelMainActivity.visible.observe(this) {
             if (it) gridLayout.startAnimation(inAnimator)
             else gridLayout.startAnimation(outAnimator)
@@ -89,19 +119,10 @@ class MainActivity : AppCompatActivity(), Animation.AnimationListener {
         }
     }
 
-    private fun initViewModels() {
-        //сюда вносятся вьюмодели, требующие инициализации
-        viewModelCSV
-        viewModelMainActivity
-    }
-
-
     override fun onResume() {
         super.onResume()
         fragmentCustomSurfaceView = supportFragmentManager
             .findFragmentById(R.id.fragment_customSv_containerView) as FragmentCustomSurfaceView
-        //        fragmentButtonGroup = supportFragmentManager
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean { //загружаем меню
@@ -111,11 +132,11 @@ class MainActivity : AppCompatActivity(), Animation.AnimationListener {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean { //кнопки меню
         when (item.itemId) {
-            R.id.menuActivityButtonClean -> {
+            R.id.menuActivityButtonClean -> {//очистить палитру
                 viewModelCSV.clearCanvas()
             }
 
-            R.id.menuActivityButtonPalette -> {
+            R.id.menuActivityButtonPalette -> {//спрятать или показать палитру
                 viewModelMainActivity.reversVisible()
             }
 
@@ -126,7 +147,6 @@ class MainActivity : AppCompatActivity(), Animation.AnimationListener {
         return true
     }
 
-
     private fun save() {
         if (getPermissionWriteReadExternalExternalStorage()) {
             if (viewModelCSV.saveCanvas())
@@ -134,7 +154,6 @@ class MainActivity : AppCompatActivity(), Animation.AnimationListener {
             else Toast.makeText(this, "Ошибка сохранения", Toast.LENGTH_SHORT).show()
         }
     }
-
 
     private fun getPermissionWriteReadExternalExternalStorage(): Boolean { //получение разрешений на сохранение
         val permission = ActivityCompat.checkSelfPermission(
@@ -145,13 +164,13 @@ class MainActivity : AppCompatActivity(), Animation.AnimationListener {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
-        if (permission != PackageManager.PERMISSION_GRANTED) {// вызывается если разрешение не было дано
+        return if (permission != PackageManager.PERMISSION_GRANTED) {// вызывается если разрешение не было дано
             ActivityCompat.requestPermissions(
                 this@MainActivity, permissionsStorage, 1
             ) //запрос на разрешение записи
-            return false
+            false
         } else {
-            return true
+            true
         }
 
     }
