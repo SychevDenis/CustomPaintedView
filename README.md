@@ -1,9 +1,15 @@
 # CustomViewDraw
 
-Program project - drawing games for Android smartphone. You can draw with either your finger or a stylus. Program functions: drawing lines, selecting brush thickness, back and forward buttons.
-Clear the screen and save the pattern in the phone memory. The program should be built on the principles of pure design, but we do not yet comply with them, since it is in the process of development.
-The program uses 1 action and 2 fragments. The ability to flip the screen without danger has been implemented, since the ViewModel is used.
+A program for drawing drafts for an Android smartphone. You can draw with your finger or a stylus. Program functions: drawing lines, choosing the thickness of the brush, choosing a color from the palette, buttons: "Back", "Forward", clearing the screen, save the drawing to your smartphone."
+The program is based on the principles of pure architecture using the Dagger 2 library.
+The program uses 1 activity and 2 fragments. The ability to flip the screen without fear of getting an exception is implemented, since the ViewModel is used.
 
-  Проект программы - рисовалки на андроид смартфон. Рисовать можно как пальцем, так и стилусом. Функции программы: рисование линий, выбор толщины кисти, кнопки назад и вперед.
-Очистка экрана и сохранение рисунка в памяти телефона. Программа должна быть построена по принципам чистой архитектуры, но пока не соответсвуем им, так как находится в процессе разработки. 
-В программе используется 1 активность и 2 фрагмента. Реализована возможность переворота экрана без опасения получить исключение, так как используется ViewModel. 
+  Программа для рисования черновиков для Android-смартфона. Рисовать можно пальцем или стилусом. Функции программы: рисование линий, выбор толщины кисти, выбор цвета из палитры, кнопки: "Назад", "Вперед", очистка экрана,  сохранить рисунок на смартфон".
+Программа основана на принципах чистой архитектуры с использованием библиотеки Dagger 2.
+В программе используется 1 активность и 2 фрагмента. Реализована возможность переворачивать экран, не опасаясь получить исключение, поскольку используется ViewModel.
+
+
+Примеры изображения нарисованные в этой программе. 
+Examples of images drawn in this program.
+
+![Изображение 1](https://github.com/SychevDenis/CustomPaintedView/assets/97845242/e2e85933-e382-4494-8976-2d19301888c0)
