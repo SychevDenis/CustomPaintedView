@@ -1,11 +1,11 @@
-package com.example.canvas_for_drawing.domain.use_case.custom_surface_view
+package com.example.canvas_for_drawing.domain.use_cases.custom_surface_view
 
 import com.example.canvas_for_drawing.domain.repository_interfaces.CanvasRepositoryCustomSurfaceView
 import javax.inject.Inject
 
-class BackLayerUseCase
+class SetColorBackgroundUseCase
 @Inject constructor(private val canvasRepository: CanvasRepositoryCustomSurfaceView) {
-    fun backLayer(activeLayer:Int):Int {
-        return canvasRepository.backLayers(activeLayer)
+    fun setColorBack(color: Int):Int{
+        return canvasRepository.setColorBackground(color)
     }
 }

@@ -5,37 +5,68 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/fragment_customSv_containerView"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/fragment_button_group"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:layout="@layout/fragment_custom_surface_view" />
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragment_customSv_containerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/fragment_button_group"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout="@layout/fragment_custom_surface_view" />
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/fragment_button_group"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:layout="@layout/fragment_button_group" />
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragment_button_group"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout="@layout/fragment_button_group" />
 
-        <GridLayout
-            android:id="@+id/gridView"
+    <LinearLayout
+        android:id="@+id/linearLayout_width_brush"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/fbutton_color_green_sea"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/fragment_customSv_containerView"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="MissingConstraints">
+
+        <TextView
+            android:id="@+id/textView_width_brush"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="150dp"
-            android:background="@color/white"
-            android:backgroundTint="@color/white"
-            android:columnCount="4"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:listitem="@layout/item_color_rv"></GridLayout>
+            android:layout_gravity="center"
+            android:paddingTop="5dp"
+            android:text="0" />
+
+        <SeekBar
+            android:id="@+id/seekBar_width_brush"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:max="100"
+            android:min="1"
+            android:paddingBottom="5dp"
+            android:progress="10" />
+    </LinearLayout>
+
+    <GridLayout
+        android:id="@+id/gridView_palette"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="150dp"
+        android:background="@color/white"
+        android:columnCount="4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:listitem="@layout/item_color_fl">
+    </GridLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

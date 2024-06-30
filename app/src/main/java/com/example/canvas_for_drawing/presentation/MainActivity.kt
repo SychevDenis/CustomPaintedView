@@ -1,9 +1,18 @@
 package com.example.canvas_for_drawing.presentation
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.LayerDrawable
+import android.graphics.drawable.ShapeDrawable
+import android.graphics.drawable.shapes.OvalShape
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -12,6 +21,9 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.GridLayout
+import android.widget.LinearLayout
+import android.widget.SeekBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -25,14 +37,18 @@ import javax.inject.Inject
 
 
 class MainActivity : AppCompatActivity(), Animation.AnimationListener {
-
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-
     private lateinit var fragmentCustomSurfaceView: FragmentCustomSurfaceView
-    private lateinit var gridLayout: GridLayout
+    private lateinit var gridLayout: GridLayout //палитра цветов
     private lateinit var inAnimator: Animation
     private lateinit var outAnimator: Animation
+
+    private lateinit var iconPalette: MenuItem
+
+    private lateinit var linearLayoutWidthBrush: LinearLayout
+    private lateinit var textViewWidthBrush: TextView
+    private lateinit var seekBarWidthBrush: SeekBar
 
     private val viewModelCSV by lazy { //получение view model через фабрику
         ViewModelProvider(this, viewModelFactory)[ViewModelCSV::class.java]
@@ -47,7 +63,6 @@ class MainActivity : AppCompatActivity(), Animation.AnimationListener {
         DaggerComponentActivity.create().inject(this)
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -56,41 +71,34 @@ class MainActivity : AppCompatActivity(), Animation.AnimationListener {
         initFragments(savedInstanceState)//инициализация фрагментов
         initObjectsAndView()//инициализация объектов и view
         viewModelObserve()//подписываемся на обновления
+        setListener()//подключаем слушатели
+
     }
 
     private fun settingNavigationBar() {
         //прячем navigation bar
-        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
-                View.SYSTEM_UI_FLAG_FULLSCREEN
+        viewModelMainActivity.settingNavigationBar(this)
     }
 
     private fun settingToolBar() {
-        supportActionBar?.setBackgroundDrawable(
-            ColorDrawable
-                (Color.parseColor("#FF0000"))
-        )
-        supportActionBar?.title = "Paint"
+        //задаем цвет и текст для ToolBar
+        viewModelMainActivity.settingToolBar(this)
     }
 
     private fun initObjectsAndView() {
         initViewModels()//инициализируем вью модели
-
         inAnimator = AnimationUtils.loadAnimation(this, R.anim.alpha_in)
         outAnimator = AnimationUtils.loadAnimation(this, R.anim.alpha_out)
-
-        gridLayout = findViewById(R.id.gridView)
-
+        gridLayout = findViewById(R.id.gridView_palette)
         outAnimator.setAnimationListener(this)
         inAnimator.setAnimationListener(this)
+        seekBarWidthBrush = findViewById(R.id.seekBar_width_brush)
+        textViewWidthBrush = findViewById(R.id.textView_width_brush)
+        linearLayoutWidthBrush = findViewById(R.id.linearLayout_width_brush)
     }
 
     private fun initFragments(savedInstanceState: Bundle?) {
-        if (savedInstanceState == null) { //если активность создана впервые, то делаем транзакцию
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_customSv_containerView, FragmentCustomSurfaceView())
-                .replace(R.id.fragment_button_group, FragmentButtonGroup())
-                .commit()
-        }
+        viewModelMainActivity.initFragments(this,savedInstanceState)
     }
 
     private fun initViewModels() { //сюда вносятся вьюмодели, требующие инициализации
@@ -102,31 +110,70 @@ class MainActivity : AppCompatActivity(), Animation.AnimationListener {
         viewModelMainActivity.listViewColor.observe(this) {
             gridLayout.removeAllViews()
             for (color in it) {
-                val frameLayout = LayoutInflater.from(this).inflate(R.layout.item_color_rv, null)
+                val frameLayout = LayoutInflater.from(this).inflate(R.layout.item_color_fl, null)
                 val viewColor: View = frameLayout.findViewById(R.id.viewColor)
-                viewColor.setOnClickListener { view -> //установка слушателя на все цвета палитры
+                viewColor.setOnClickListener { //установка слушателя на все цвета палитры
+                    iconPalette.setIcon(
+                        viewModelMainActivity.createColorCircleDrawables(color)
+                    )//обновляем иконку
+
+                    //палитры выбранным цветом
                     viewModelCSV.setColorStroke(color)
+                    viewModelMainActivity.reversVisible()
                 }
-                viewColor.background = ColorDrawable(color)
+                viewColor.background = GradientDrawable().apply {
+                    shape = GradientDrawable.OVAL
+                    this.setColor(color)
+                }
                 gridLayout.addView(frameLayout)
             }
         }
-
         viewModelMainActivity.visible.observe(this) {
             if (it) gridLayout.startAnimation(inAnimator)
             else gridLayout.startAnimation(outAnimator)
             gridLayout.isVisible = it
         }
+
+        viewModelCSV.vmStrokeWidth.observe(this) {
+            textViewWidthBrush.text = it.toString()
+        }
+        viewModelCSV.visibleLinearLayoutWidthBrush.observe(this) {
+            if (it) linearLayoutWidthBrush.visibility = View.VISIBLE
+            else linearLayoutWidthBrush.visibility = View.INVISIBLE
+        }
+    }
+
+    private fun setListener() {//подключаем все слушатели
+        seekBarWidthBrush.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(p0: SeekBar?, progress: Int, p2: Boolean) {
+                setBrushSize(progress)
+            }
+
+            override fun onStartTrackingTouch(p0: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(p0: SeekBar?) {
+            }
+        })
+    }
+
+    fun setBrushSize(progress: Int) {
+        viewModelCSV.setProgressSeekBar(progress)
     }
 
     override fun onResume() {
         super.onResume()
         fragmentCustomSurfaceView = supportFragmentManager
             .findFragmentById(R.id.fragment_customSv_containerView) as FragmentCustomSurfaceView
+//        mainActivityInterface = supportFragmentManager //интерфейс с FragmentButtonGroup
+//            .findFragmentById(R.id.fragment_button_group) as MainActivityInterface
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean { //загружаем меню
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {//загружаем меню
         menuInflater.inflate(R.menu.main_menu, menu)
+        menu?.findItem(R.id.menuActivityButtonPalette)?.let {
+            iconPalette = it
+        }
         return true
     }
 
@@ -188,4 +235,6 @@ class MainActivity : AppCompatActivity(), Animation.AnimationListener {
     }
 
 }
+
+
 

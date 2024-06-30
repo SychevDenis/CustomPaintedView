@@ -3,22 +3,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.canvas_for_drawing">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
 
     <application
-        android:requestLegacyExternalStorage="true"
-        android:allowBackup="true"
         android:name=".Application"
+        android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CustomViewDraw">
-        <activity
 
-            android:name="com.example.canvas_for_drawing.presentation.MainActivity"
+        <activity
+            android:name=".presentation.MainActivity"
             android:exported="true">
+            <!--android:screenOrientation="portrait"-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
