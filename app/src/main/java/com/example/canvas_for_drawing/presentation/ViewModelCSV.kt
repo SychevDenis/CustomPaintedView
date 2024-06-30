@@ -7,16 +7,16 @@ import androidx.lifecycle.ViewModel
 import com.example.canvas_for_drawing.domain.models.Pair
 import com.example.canvas_for_drawing.domain.models.DrawingObject
 import com.example.canvas_for_drawing.domain.models.OnSizeChanged
-import com.example.canvas_for_drawing.domain.use_case.color_use_cases.SetColorStrokeUseCases
-import com.example.canvas_for_drawing.domain.use_case.custom_surface_view.BackLayerUseCase
-import com.example.canvas_for_drawing.domain.use_case.custom_surface_view.ClearCanvasUseCase
-import com.example.canvas_for_drawing.domain.use_case.custom_surface_view.CreatingNewThreadUseCases
-import com.example.canvas_for_drawing.domain.use_case.custom_surface_view.NextLayerUseCase
-import com.example.canvas_for_drawing.domain.use_case.custom_surface_view.PaintUseCase
-import com.example.canvas_for_drawing.domain.use_case.custom_surface_view.SaveCanvasUseCase
-import com.example.canvas_for_drawing.domain.use_case.custom_surface_view.SetColorBackgroundUseCase
-import com.example.canvas_for_drawing.domain.use_case.custom_surface_view.SetProgressSeekBarUseCase
-import com.example.canvas_for_drawing.domain.use_case.custom_surface_view.SetSizeChanged
+import com.example.canvas_for_drawing.domain.use_cases.color_use_cases.SetColorStrokeUseCases
+import com.example.canvas_for_drawing.domain.use_cases.custom_surface_view.BackLayerUseCase
+import com.example.canvas_for_drawing.domain.use_cases.custom_surface_view.ClearCanvasUseCase
+import com.example.canvas_for_drawing.domain.use_cases.custom_surface_view.CreatingNewThreadUseCases
+import com.example.canvas_for_drawing.domain.use_cases.custom_surface_view.NextLayerUseCase
+import com.example.canvas_for_drawing.domain.use_cases.custom_surface_view.PaintUseCase
+import com.example.canvas_for_drawing.domain.use_cases.custom_surface_view.SaveCanvasUseCase
+import com.example.canvas_for_drawing.domain.use_cases.custom_surface_view.SetColorBackgroundUseCase
+import com.example.canvas_for_drawing.domain.use_cases.custom_surface_view.SetProgressSeekBarUseCase
+import com.example.canvas_for_drawing.domain.use_cases.custom_surface_view.SetSizeChanged
 
 import javax.inject.Inject
 
@@ -82,14 +82,13 @@ class ViewModelCSV @Inject constructor(
 
     fun clearCanvas() {//очистить холст
         //если предыдущее действие было не отчистка экрана
-
         if (lastAction!=CLEAN_CANVAS) {
             lastAction = CLEAN_CANVAS
             val pair = getPairValue()
             val backColor = getColorBack()
             creatingNewThread() //начинаем ветку с активного слоя
-            val cleanerPair = clearCanvasUseCase.clearCanvas(pair, onSizeChanged, backColor) as Pair?
-
+            val cleanerPair =
+                clearCanvasUseCase.clearCanvas(pair, onSizeChanged, backColor) as Pair?
             setPairValue(cleanerPair)
             nextLayers()
         }
@@ -117,7 +116,6 @@ class ViewModelCSV @Inject constructor(
     fun paint(drawingObject: DrawingObject) {//рисуем объект
         lastAction = PAINT
         //добавляем данные о ширине и цвете кисти
-
         drawingObject.let {
             it.strokeWidth = vmStrokeWidth.value?: 10f
             it.color = colorStroke

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,9 +7,40 @@
     android:layout_weight="1"
     android:background="#FE0000"
     android:fitsSystemWindows="true"
-    android:gravity="left"
+    android:layout_gravity="start"
     android:orientation="horizontal"
     tools:context=".presentation.fragments.FragmentButtonGroup">
+
+    <ImageButton
+        android:id="@+id/view_fragment_button_group"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="10dp"
+        android:layout_gravity="start"/>
+
+    <ImageButton
+        android:id="@+id/view_fragment_button_back"
+        android:src="@drawable/ic_baseline_chevron_left_24"
+        android:scaleType="fitCenter"
+        android:backgroundTint="#FE0000"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_gravity="end"
+        android:layout_marginEnd="100dp"
+        app:tint="@color/white"/>
+
+    <ImageButton
+        android:id="@+id/view_fragment_button_next"
+        android:layout_width="70dp"
+        android:src="@drawable/ic_baseline_chevron_right_24"
+        android:scaleType="fitCenter"
+        android:backgroundTint="#FE0000"
+        android:layout_height="70dp"
+        android:layout_gravity="end"
+        android:layout_marginEnd="20dp"
+        app:tint="@color/white" />
+
+</FrameLayout>
     <!--
     <com.google.android.material.button.MaterialButton
         android:id="@+id/material_icon_button"
@@ -19,10 +50,4 @@
         app:icon="@drawable/ic_point"
         app:iconTint="@color/white" />
 -->
-    <ImageButton
-        android:paddingLeft="20dp"
-        android:id="@+id/view_fragment_button_group"
-        android:layout_width="70dp"
-        android:layout_height="70dp" />
 
-</LinearLayout><!-- android:background="@drawable/button_style1" -->

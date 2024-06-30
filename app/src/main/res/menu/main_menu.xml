@@ -5,7 +5,7 @@
 
     <item
         android:id="@+id/menuActivityButtonPalette"
-        android:icon="@drawable/ic_palette"
+        android:icon="@drawable/ic_palette_color"
         android:orderInCategory="1"
         android:title="Палитра"
         app:showAsAction="ifRoom" />
