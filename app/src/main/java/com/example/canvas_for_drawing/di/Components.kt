@@ -1,5 +1,6 @@
 package com.example.canvas_for_drawing.di
 
+import com.example.canvas_for_drawing.di.modules.ModuleCanvasRepositoryImplActivity
 import com.example.canvas_for_drawing.di.modules.ModuleCanvasRepositoryImplColor
 import com.example.canvas_for_drawing.di.modules.ModuleCanvasRepositoryImplCustomSurfaceView
 import com.example.canvas_for_drawing.di.modules.ModuleViewModel
@@ -11,6 +12,7 @@ import dagger.Component
     modules = [
         ModuleCanvasRepositoryImplCustomSurfaceView::class,
         ModuleCanvasRepositoryImplColor::class,
+        ModuleCanvasRepositoryImplActivity::class,
         ModuleViewModel::class]
 )
 interface ComponentActivity {

@@ -8,18 +8,24 @@
         android:icon="@drawable/ic_palette_color"
         android:orderInCategory="1"
         android:title="Палитра"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/menuActivityButtonEraser"
+        android:icon="@drawable/ic_eraser"
+        android:orderInCategory="2"
+        android:title="Ластик"
+        app:showAsAction="always"/>
     <item
         android:id="@+id/menuActivityButtonClean"
         android:icon="@drawable/ic_baseline_cleaning_services_24"
-        android:orderInCategory="2"
+        android:orderInCategory="3"
         android:title="Очистить экран"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"/>
     <item
         android:id="@+id/menuActivityButtonSaveImage"
         android:icon="@drawable/ic_baseline_save_24"
-        android:orderInCategory="2"
+        android:orderInCategory="4"
         android:title="Сохранить рисунок"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"/>
 
 </menu>

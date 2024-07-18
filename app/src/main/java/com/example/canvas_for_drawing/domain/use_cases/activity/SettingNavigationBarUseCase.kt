@@ -1,0 +1,13 @@
+package com.example.canvas_for_drawing.domain.use_cases.activity
+
+import android.app.Activity
+import com.example.canvas_for_drawing.domain.repository_interfaces.CanvasRepositoryActivity
+import javax.inject.Inject
+
+class SettingNavigationBarUseCase
+@Inject constructor(private val canvasRepository: CanvasRepositoryActivity) {
+    fun setting(activity: Any): Boolean {
+        canvasRepository.settingNavigationBar(activity)
+        return true
+    }
+}

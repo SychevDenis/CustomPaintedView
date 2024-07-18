@@ -9,5 +9,5 @@
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
     tools:layout="@layout/fragment_button_group">
-
+    <!--делаем прозрачный фон в android:background -->
 </com.example.canvas_for_drawing.presentation.CustomSurfaceView>

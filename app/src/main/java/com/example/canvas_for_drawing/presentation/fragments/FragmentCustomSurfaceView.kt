@@ -13,7 +13,7 @@ import com.example.canvas_for_drawing.R
 import com.example.canvas_for_drawing.domain.models.DrawingObject
 import com.example.canvas_for_drawing.domain.models.OnSizeChanged
 import com.example.canvas_for_drawing.presentation.CustomSurfaceView
-import com.example.canvas_for_drawing.presentation.ViewModelCSV
+import com.example.canvas_for_drawing.presentation.viewModels.ViewModelCSV
 
 private lateinit var customSurfaceView: CustomSurfaceView
 
@@ -34,7 +34,6 @@ class FragmentCustomSurfaceView() : Fragment(),
         )
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         customSurfaceView = view.findViewById(R.id.custom_surfaceView)
@@ -53,10 +52,8 @@ class FragmentCustomSurfaceView() : Fragment(),
         }
         //обновление рисунка
         viewModelCSV.pairLD.observe(viewLifecycleOwner) {
-
             val listPath = it.getListPath() as? MutableList<Path> ?: return@observe
             val listPaint = it.getListPaint() as? MutableList<Paint> ?: return@observe
-
             customSurfaceView.setPathAndPaint(listPath, listPaint)
         }
     }
@@ -72,8 +69,6 @@ class FragmentCustomSurfaceView() : Fragment(),
     override fun setSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         viewModelCSV.setSizeChanged(OnSizeChanged(w, h, oldw, oldh))
     }
-
-
 }
 
 

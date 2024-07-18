@@ -7,7 +7,6 @@ import com.example.canvas_for_drawing.data.data_methods_custom_surfave_view.Crea
 import com.example.canvas_for_drawing.data.data_methods_custom_surfave_view.NextLayer
 import com.example.canvas_for_drawing.data.data_methods_custom_surfave_view.PaintLineTo
 import com.example.canvas_for_drawing.data.data_methods_custom_surfave_view.PaintMoveTo
-import com.example.canvas_for_drawing.data.data_methods_custom_surfave_view.SetSizeChanged
 import com.example.canvas_for_drawing.domain.models.DrawingObject
 import com.example.canvas_for_drawing.domain.models.OnSizeChanged
 import com.example.canvas_for_drawing.domain.models.Pair
@@ -15,7 +14,6 @@ import com.example.canvas_for_drawing.domain.repository_interfaces.CanvasReposit
 
 class CanvasRepositoryImplCustomSurfaceView(
     private val saveBitmap: SaveBitmap,
-    private val setSizeChanged: SetSizeChanged,
     private val backLayer: BackLayer,
     private val nextLayer: NextLayer,
     private val pathLineTo: PaintLineTo,
@@ -23,9 +21,6 @@ class CanvasRepositoryImplCustomSurfaceView(
     private val creatingNewThread: CreatingNewThread,
     private val clearCanvas: ClearCanvas,
 ) : CanvasRepositoryCustomSurfaceView {
-    override fun setColorBackground(color: Int): Int {//установка цвета фона
-        return color
-    }
 
     override fun paintMoveTo(
         drawingObject: DrawingObject,
@@ -41,16 +36,6 @@ class CanvasRepositoryImplCustomSurfaceView(
         return pathLineTo.paint(drawingObject, pair)
     }
 
-
-    override fun setSizeChanged(onSizeChanged: OnSizeChanged): OnSizeChanged {
-        //возравщаем размер экрана
-        return setSizeChanged.setSizeChanged(onSizeChanged)
-    }
-
-    override fun setProgressSeekBar(progress: Int): Int {//установить размер кисти
-        return progress
-        //   settingPaintObjectLD.value?.strokeWidth = progress.toFloat() ?: 10f
-    }
 
     override fun backLayers(activeLayer: Int): Int {// назад по слоям
         return backLayer.backLayer(activeLayer)
@@ -75,11 +60,12 @@ class CanvasRepositoryImplCustomSurfaceView(
     }
 
 
-    override fun saveCanvas( //сохранение изображения
-        onSizeChanged: OnSizeChanged, pair: Pair, activeLayer: Int
+    override fun saveBitmap( //сохранение изображения
+        fileName: String, onSizeChanged: OnSizeChanged, pair: Pair, activeLayer: Int
     ): Boolean { //запись в хранилище
         saveBitmap.toString()
         return saveBitmap.save(
+            fileName,
             onSizeChanged,
             pair,
             activeLayer

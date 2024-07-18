@@ -11,21 +11,24 @@ import com.example.canvas_for_drawing.domain.models.Pair
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.util.Calendar
 import javax.inject.Inject
 
 class SaveBitmap @Inject constructor() {
-    fun save(
+    fun save(fileName:String,
         onSizeChanged: OnSizeChanged,
         pair:Pair,
         activeLayer: Int
     ): Boolean {
+
         val myDir = File( //объявляем каталог
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
-            "CustomSV"
+            "PaintingApp"
         )
         myDir.mkdirs() //создаем его
-        val filename = "myCanvas.jpg" //имя создаваемого файла
-        val file = File(myDir, filename) //объявляем файл
+
+        val file = File(myDir, fileName) //объявляем файл
+
         if (file.exists()) {//проверяем, существует ли файл с таким названием в этой дериктории
             file.delete()//если да, то удаляем его
         }

@@ -11,7 +11,7 @@ class CanvasRepositoryImplColor(
     private val setColor: SetColor
 ) : CanvasRepositoryColor {
 
-    override fun addColorInBar(
+    override fun addColorInPalette(
         color: Int,
         list: MutableList<Int>,
         maxLength: Int

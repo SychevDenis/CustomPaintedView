@@ -31,8 +31,8 @@
         android:layout_height="wrap_content"
         android:background="@color/fbutton_color_green_sea"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@+id/fragment_customSv_containerView"
         android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/fragment_customSv_containerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:ignore="MissingConstraints">
@@ -44,7 +44,6 @@
             android:layout_gravity="center"
             android:paddingTop="5dp"
             android:text="0" />
-
         <SeekBar
             android:id="@+id/seekBar_width_brush"
             android:layout_width="match_parent"

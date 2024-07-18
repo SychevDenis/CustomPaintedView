@@ -1,4 +1,4 @@
-package com.example.canvas_for_drawing.presentation
+package com.example.canvas_for_drawing.presentation.viewModels
 
 import android.graphics.Color
 
@@ -7,43 +7,29 @@ import androidx.lifecycle.ViewModel
 import com.example.canvas_for_drawing.domain.models.Pair
 import com.example.canvas_for_drawing.domain.models.DrawingObject
 import com.example.canvas_for_drawing.domain.models.OnSizeChanged
-import com.example.canvas_for_drawing.domain.use_cases.color_use_cases.SetColorStrokeUseCases
 import com.example.canvas_for_drawing.domain.use_cases.custom_surface_view.BackLayerUseCase
 import com.example.canvas_for_drawing.domain.use_cases.custom_surface_view.ClearCanvasUseCase
-import com.example.canvas_for_drawing.domain.use_cases.custom_surface_view.CreatingNewThreadUseCases
+import com.example.canvas_for_drawing.domain.use_cases.custom_surface_view.CreatingNewThreadUseCase
 import com.example.canvas_for_drawing.domain.use_cases.custom_surface_view.NextLayerUseCase
 import com.example.canvas_for_drawing.domain.use_cases.custom_surface_view.PaintUseCase
 import com.example.canvas_for_drawing.domain.use_cases.custom_surface_view.SaveCanvasUseCase
-import com.example.canvas_for_drawing.domain.use_cases.custom_surface_view.SetColorBackgroundUseCase
-import com.example.canvas_for_drawing.domain.use_cases.custom_surface_view.SetProgressSeekBarUseCase
-import com.example.canvas_for_drawing.domain.use_cases.custom_surface_view.SetSizeChanged
 
 import javax.inject.Inject
 
 class ViewModelCSV @Inject constructor(
-    private val setColorBackgroundUseCase: SetColorBackgroundUseCase,
     private val backLayersUseCase: BackLayerUseCase,
-    private val setProgressSeekBarUseCase: SetProgressSeekBarUseCase,
     private val clickNextUseCase: NextLayerUseCase,
     private val clearCanvasUseCase: ClearCanvasUseCase,
-    private val setSizeChangedUseCase: SetSizeChanged,
     private val paintUseCase: PaintUseCase,
     private val saveCanvas: SaveCanvasUseCase,
-
-    private val creatingNewThreadUseCases: CreatingNewThreadUseCases,
-    private val setColorStrokeUseCases: SetColorStrokeUseCases,
-
-
+    private val creatingNewThreadUseCases: CreatingNewThreadUseCase,
 ) : ViewModel() {
     val colorBackgroundCanvasLD = MutableLiveData(Color.WHITE) //стандартный цвет фона
     val pairLD = MutableLiveData(Pair())
     val activeLayerLD = MutableLiveData(FIRST_LAYER)//активный слой
-    var vmStrokeWidth = MutableLiveData(10f)//ширина кисти
-    var visibleLinearLayoutWidthBrush = MutableLiveData(false)//ширина кисти
-    private var lastAction=NONE //последнее выполненное действие
-
+    private var strokeWidth = 10f//ширина кисти
+    private var lastAction = NONE //последнее выполненное действие
     private var onSizeChanged = OnSizeChanged()//размеры customSurfaceView
-
     private var colorStroke = Color.BLACK
 
 
@@ -51,18 +37,21 @@ class ViewModelCSV @Inject constructor(
         activeLayerLD.value?.let { return it } ?: return 0
     }
 
-
-    fun setColorStroke(color: Int) {
-        colorStroke = setColorStrokeUseCases.setColorStroke(color)
+    fun setStrokeWidth(value: Float) {//установить ширину кисти
+        strokeWidth = value
     }
 
+    fun setColorStroke(color: Int) {//выбор цвета кисти
+        colorStroke = color
+        //setColorStrokeUseCases.setColorStroke(color)
+    }
 
     private fun setActiveLayer(it: Int) {
         activeLayerLD.value = it
     }
 
     fun setColorBack(color: Int) { //установить значение заднего фона
-        colorBackgroundCanvasLD.value = setColorBackgroundUseCase.setColorBack(color)
+        colorBackgroundCanvasLD.value = color
     }
 
     private fun getColorBack(): Int { //установить значение заднего фона
@@ -82,7 +71,7 @@ class ViewModelCSV @Inject constructor(
 
     fun clearCanvas() {//очистить холст
         //если предыдущее действие было не отчистка экрана
-        if (lastAction!=CLEAN_CANVAS) {
+        if (lastAction != CLEAN_CANVAS) {
             lastAction = CLEAN_CANVAS
             val pair = getPairValue()
             val backColor = getColorBack()
@@ -96,28 +85,23 @@ class ViewModelCSV @Inject constructor(
 
     fun setSizeChanged(onSizeChanged: OnSizeChanged) {
         //установка высоты и ширины (для очистки экрана)
-        this.onSizeChanged = setSizeChangedUseCase.setSizeChanged(onSizeChanged)
+        this.onSizeChanged = onSizeChanged
     }
 
-    fun saveCanvas(): Boolean {
+    fun saveCanvas(fileName: String): Boolean {
         pairLD.value?.let { pair ->
-                activeLayerLD.value?.let { activeLayer ->
-                    return saveCanvas.saveCanvas(onSizeChanged,pair,activeLayer)
-                }
+            activeLayerLD.value?.let { activeLayer ->
+                return saveCanvas.saveCanvas(fileName, onSizeChanged, pair, activeLayer)
             }
+        }
         return false
-    }
-
-    fun setProgressSeekBar(progress: Int) { //установка ширины кисти
-        vmStrokeWidth.value=
-            setProgressSeekBarUseCase.setProgressSeekBar(progress).toFloat() ?: 10f
     }
 
     fun paint(drawingObject: DrawingObject) {//рисуем объект
         lastAction = PAINT
         //добавляем данные о ширине и цвете кисти
         drawingObject.let {
-            it.strokeWidth = vmStrokeWidth.value?: 10f
+            it.strokeWidth = strokeWidth
             it.color = colorStroke
         }
 
@@ -150,13 +134,13 @@ class ViewModelCSV @Inject constructor(
         pairLD.value?.let { pairLD.value = it; return it } ?: return Pair()
     }
 
-
     private fun setPairValue(pair: Pair?) //читаем PairList
     {
         if (pair != null) {
             pairLD.value = pair
         }
     }
+
     private fun creatingNewThread() { //создание новой ветки истории рисования
         creatingNewThreadUseCases.create(getPairValue(), getActiveLayer())
     }
@@ -175,9 +159,9 @@ class ViewModelCSV @Inject constructor(
 
         //список последний действий с изображением
 
-        private const val NONE=0  //ничего
-        private const val PAINT=1 //было выполнено рисование
-        private const val CLEAN_CANVAS=2 //был очищен экран
-        private const val BACK_LAYER=3 //шаг назад по слоям
+        private const val NONE = 0  //ничего
+        private const val PAINT = 1 //было выполнено рисование
+        private const val CLEAN_CANVAS = 2 //был очищен экран
+        private const val BACK_LAYER = 3 //шаг назад по слоям
     }
 }

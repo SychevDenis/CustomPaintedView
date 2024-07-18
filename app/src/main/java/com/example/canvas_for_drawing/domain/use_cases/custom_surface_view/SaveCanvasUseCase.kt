@@ -5,11 +5,13 @@ import com.example.canvas_for_drawing.domain.models.OnSizeChanged
 import com.example.canvas_for_drawing.domain.models.Pair
 import javax.inject.Inject
 
-class SaveCanvasUseCase @Inject constructor (private val canvasRepository: CanvasRepositoryCustomSurfaceView) {
-    fun saveCanvas(onSizeChanged: OnSizeChanged,
-                   pair: Pair,
-                   activeLayer: Int):Boolean {
-       return canvasRepository.saveCanvas(onSizeChanged,pair,activeLayer)
+class SaveCanvasUseCase @Inject constructor(private val canvasRepository: CanvasRepositoryCustomSurfaceView) {
+    fun saveCanvas(
+        fileName: String, onSizeChanged: OnSizeChanged,
+        pair: Pair,
+        activeLayer: Int
+    ): Boolean {
+        return canvasRepository.saveBitmap(fileName, onSizeChanged, pair, activeLayer)
     }
 
 }

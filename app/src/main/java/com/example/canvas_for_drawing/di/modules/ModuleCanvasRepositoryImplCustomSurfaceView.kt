@@ -8,7 +8,6 @@ import com.example.canvas_for_drawing.data.data_methods_custom_surfave_view.Next
 import com.example.canvas_for_drawing.data.data_methods_custom_surfave_view.PaintLineTo
 import com.example.canvas_for_drawing.data.data_methods_custom_surfave_view.PaintMoveTo
 import com.example.canvas_for_drawing.data.data_methods_custom_surfave_view.SaveBitmap
-import com.example.canvas_for_drawing.data.data_methods_custom_surfave_view.SetSizeChanged
 import com.example.canvas_for_drawing.domain.repository_interfaces.CanvasRepositoryCustomSurfaceView
 import dagger.Module
 import dagger.Provides
@@ -18,7 +17,6 @@ class ModuleCanvasRepositoryImplCustomSurfaceView {
     @Provides
     fun provideRepositoryImpl(
         saveBitmap: SaveBitmap,
-        setSizeChanged: SetSizeChanged,
         backLayer: BackLayer,
         nextLayer: NextLayer,
         pathLineTo: PaintLineTo,
@@ -28,13 +26,12 @@ class ModuleCanvasRepositoryImplCustomSurfaceView {
     ): CanvasRepositoryCustomSurfaceView {
         return CanvasRepositoryImplCustomSurfaceView(
             saveBitmap,
-            setSizeChanged,
             backLayer,
             nextLayer,
             pathLineTo,
             pathMoveTo,
             creatingNewThread,
-            clearCanvas,
+            clearCanvas
         )
     }
 }
