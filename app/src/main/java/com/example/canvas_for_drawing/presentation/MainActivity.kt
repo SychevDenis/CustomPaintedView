@@ -1,6 +1,5 @@
 package com.example.canvas_for_drawing.presentation
 
-import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -79,8 +78,10 @@ class MainActivity : AppCompatActivity(), Animation.AnimationListener {
                            savedInstanceState: Bundle?) {//настройки приложения
         initFragments(activity, savedInstanceState)//инициализация фрагментов
         settingNavigationBar(activity) //настройка NavigationBar
-        setBackColor(ContextCompat.getColor
-                (activity, R.color.background_color)) //установка цвета заднего фона приложения
+        setBackColor(ContextCompat.getColor //установка цвета заднего фона приложения
+                (activity, R.color.background_color))
+        setColorSpace(ContextCompat.getColor //установка цвета холста
+            (activity,R.color.white))
         settingToolBar(activity, "Кисть") //установка заголовка
     }
 
@@ -100,6 +101,9 @@ class MainActivity : AppCompatActivity(), Animation.AnimationListener {
 
     private fun setBackColor(color: Int) {//установка BackgroundColor
        viewModelMainActivity.setBackColor(color)
+    }
+    private fun setColorSpace(color: Int) {//установка BackgroundColor
+        viewModelCSV.setColorSpace(color)
     }
 
     private fun viewModelObserve() {
@@ -138,6 +142,7 @@ class MainActivity : AppCompatActivity(), Animation.AnimationListener {
             //при изменении видимости панели регулировки размера кисти
             viewWidthBrush.isVisible = it
         }
+
     }
 
     private fun setListener() {//подключаем все слушатели
@@ -180,6 +185,8 @@ class MainActivity : AppCompatActivity(), Animation.AnimationListener {
 
             R.id.menuActivityButtonPalette -> {//спрятать или показать палитру
                 settingToolBar(this,"Кисть")
+                val lastColor= viewModelMainActivity.getLastSavedColor()
+                viewModelCSV.setColorStroke(lastColor)
                 viewModelMainActivity.visibilityInvisibleVisiblePalette()
             }
 
@@ -189,7 +196,7 @@ class MainActivity : AppCompatActivity(), Animation.AnimationListener {
 
             R.id.menuActivityButtonEraser -> {
                 settingToolBar(this,"Ластик")
-                viewModelCSV.setColorStroke(Color.WHITE)//ластик
+                viewModelCSV.setEraser()//выбрать ластик
             }
         }
         return true

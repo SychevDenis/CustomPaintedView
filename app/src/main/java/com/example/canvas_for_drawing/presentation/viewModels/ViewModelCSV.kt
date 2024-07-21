@@ -13,7 +13,6 @@ import com.example.canvas_for_drawing.domain.use_cases.custom_surface_view.Creat
 import com.example.canvas_for_drawing.domain.use_cases.custom_surface_view.NextLayerUseCase
 import com.example.canvas_for_drawing.domain.use_cases.custom_surface_view.PaintUseCase
 import com.example.canvas_for_drawing.domain.use_cases.custom_surface_view.SaveCanvasUseCase
-
 import javax.inject.Inject
 
 class ViewModelCSV @Inject constructor(
@@ -24,14 +23,13 @@ class ViewModelCSV @Inject constructor(
     private val saveCanvas: SaveCanvasUseCase,
     private val creatingNewThreadUseCases: CreatingNewThreadUseCase,
 ) : ViewModel() {
-    val colorBackgroundCanvasLD = MutableLiveData(Color.WHITE) //стандартный цвет фона
+    val colorSpace = MutableLiveData(Color.WHITE) //стандартный цвет холста
     val pairLD = MutableLiveData(Pair())
     val activeLayerLD = MutableLiveData(FIRST_LAYER)//активный слой
     private var strokeWidth = 10f//ширина кисти
     private var lastAction = NONE //последнее выполненное действие
     private var onSizeChanged = OnSizeChanged()//размеры customSurfaceView
     private var colorStroke = Color.BLACK
-
 
     private fun getActiveLayer(): Int {
         activeLayerLD.value?.let { return it } ?: return 0
@@ -43,19 +41,22 @@ class ViewModelCSV @Inject constructor(
 
     fun setColorStroke(color: Int) {//выбор цвета кисти
         colorStroke = color
-        //setColorStrokeUseCases.setColorStroke(color)
     }
 
-    private fun setActiveLayer(it: Int) {
+    fun setEraser() {//выборать ластик
+        setColorStroke(getColorSpace())
+    }
+
+    private fun setActiveLayer(it: Int) {//получить активный слой
         activeLayerLD.value = it
     }
 
-    fun setColorBack(color: Int) { //установить значение заднего фона
-        colorBackgroundCanvasLD.value = color
+    fun setColorSpace(color: Int) { //установить цвет холста
+        colorSpace.value = color
     }
 
-    private fun getColorBack(): Int { //установить значение заднего фона
-        colorBackgroundCanvasLD.value?.let { return it } ?: return Color.WHITE
+    private fun getColorSpace(): Int { //прочитать цвет холста
+        return colorSpace.value ?: Color.WHITE
     }
 
     fun backLayers() {//назад по слоям
@@ -74,12 +75,13 @@ class ViewModelCSV @Inject constructor(
         if (lastAction != CLEAN_CANVAS) {
             lastAction = CLEAN_CANVAS
             val pair = getPairValue()
-            val backColor = getColorBack()
+            val colorSpace = getColorSpace()
             creatingNewThread() //начинаем ветку с активного слоя
             val cleanerPair =
-                clearCanvasUseCase.clearCanvas(pair, onSizeChanged, backColor) as Pair?
+                clearCanvasUseCase.clearCanvas(pair, onSizeChanged, colorSpace) as Pair?
             setPairValue(cleanerPair)
             nextLayers()
+        } else {
         }
     }
 
@@ -138,6 +140,7 @@ class ViewModelCSV @Inject constructor(
     {
         if (pair != null) {
             pairLD.value = pair
+        } else {
         }
     }
 
@@ -158,7 +161,6 @@ class ViewModelCSV @Inject constructor(
         private const val ACTION_MOVE = 2
 
         //список последний действий с изображением
-
         private const val NONE = 0  //ничего
         private const val PAINT = 1 //было выполнено рисование
         private const val CLEAN_CANVAS = 2 //был очищен экран

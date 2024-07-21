@@ -13,9 +13,9 @@ class ClearCanvas @Inject constructor() {
         backColor: Int
     ): Pair? {
         //записываем максимальное значение между шириной и высотой экрана
+        //такое большое число нужно на случай, если у приложения будет функция переворота экрана
         val max = (onSizeChanged.w.toFloat().coerceAtLeast
             (onSizeChanged.h.toFloat())) * 2
-
         val newPaint = (Paint().apply {
             style = Paint.Style.FILL
             color = backColor
@@ -23,15 +23,18 @@ class ClearCanvas @Inject constructor() {
         val newPath = Path().apply {
             // Рисуем прямоугольник во весь экран устройства
             addRect(
-                onSizeChanged.oldW.toFloat(),
-                onSizeChanged.oldH.toFloat(),
+                0f,
+                0f,
                 max,
                 max,
                 Path.Direction.CW
             )
         }
-        return if (pair.add(newPath,newPaint))
-            pair
-        else null
+
+        if (pair.add(newPath, newPaint)) {
+            return pair
+        } else {
+            return null
+        }
     }
 }

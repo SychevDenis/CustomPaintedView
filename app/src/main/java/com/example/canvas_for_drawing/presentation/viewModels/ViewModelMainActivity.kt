@@ -37,6 +37,7 @@ class ViewModelMainActivity @Inject constructor(
     var vmVisibleViewWidthBrush = MutableLiveData(false)//видимость кисти
     var vmStrokeWidth = MutableLiveData(10f)//стандартная ширина кисти
     private var colorBack = Color.BLACK //стандартный цвет заднего фона
+    private var colorIconPalette = Color.BLACK //стандартный кисти
 
     init {
         //добавляем все нужные цвета в палитру
@@ -126,9 +127,15 @@ class ViewModelMainActivity @Inject constructor(
         vmListViewColor.value = list
     }
 
-    fun createColorCircleDrawables(color: Int): LayerDrawable {//функция
-        //цвета иконки палитры
+    fun createColorCircleDrawables(color: Int): LayerDrawable {//функция цвета иконки палитры
+        saveLastColor(color)//сохраняем последний выбранный цвет
         return createColorCircleDrawablesUseCase.create(color) as LayerDrawable
+    }
+    private fun saveLastColor(color: Int){//сохранить последний цвет
+        colorIconPalette = color
+    }
+    fun getLastSavedColor():Int{//получить последний цвет
+        return colorIconPalette
     }
 
     fun settingNavigationBar(activity: Activity) {
@@ -150,7 +157,7 @@ class ViewModelMainActivity @Inject constructor(
         return getPermissionWriteReadUseCase.get(context)
     }
 
-    fun getColorBackStr(): String {
+    private fun getColorBackStr(): String {
         return String.format("#%08X", colorBack)//форматируем полученный цвет в hex код типа string
     }
 

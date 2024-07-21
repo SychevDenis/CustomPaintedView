@@ -43,7 +43,7 @@ class FragmentCustomSurfaceView() : Fragment(),
 
     private fun viewModelObserve() {//подписываемся на обновления
         //обновление цвета заднего фона
-        viewModelCSV.colorBackgroundCanvasLD.observe(viewLifecycleOwner) {
+        viewModelCSV.colorSpace.observe(viewLifecycleOwner) {
             customSurfaceView.setColorBackgroundCanvas(it)
         }
         //обновление активного слоя
@@ -63,7 +63,7 @@ class FragmentCustomSurfaceView() : Fragment(),
     }
 
     override fun setColorBackgroundCanvas(color: Int) {
-        viewModelCSV.setColorBack(color)
+        viewModelCSV.setColorSpace(color)
     }
 
     override fun setSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
