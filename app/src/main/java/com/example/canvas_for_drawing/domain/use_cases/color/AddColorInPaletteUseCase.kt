@@ -4,7 +4,7 @@ import javax.inject.Inject
 
 class AddColorInPaletteUseCase
 @Inject constructor(private val canvasRepository: CanvasRepositoryColor) {
-    fun addColor(color:Int,list: MutableList<Int>,maxLength:Int):MutableList<Int>{
+    fun addColor(color:Int,list: MutableSet<Int>,maxLength:Int):MutableSet<Int>{
        return canvasRepository.addColorInPalette(color,list,maxLength)
     }
 }

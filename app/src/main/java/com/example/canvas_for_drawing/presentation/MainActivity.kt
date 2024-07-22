@@ -1,5 +1,6 @@
 package com.example.canvas_for_drawing.presentation
 
+import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -74,17 +75,19 @@ class MainActivity : AppCompatActivity(), Animation.AnimationListener {
         viewModelMainActivity
     }
 
-    private fun settingApp(activity: AppCompatActivity,
-                           savedInstanceState: Bundle?) {//настройки приложения
+    private fun settingApp(activity: AppCompatActivity, savedInstanceState: Bundle?) {
+        //настройки приложения
         initFragments(activity, savedInstanceState)//инициализация фрагментов
         settingNavigationBar(activity) //настройка NavigationBar
-        setBackColor(ContextCompat.getColor //установка цвета заднего фона приложения
-                (activity, R.color.background_color))
-        setColorSpace(ContextCompat.getColor //установка цвета холста
-            (activity,R.color.white))
+        setBackColor(getColor(activity, R.color.background_color)) //цвет заднего фона приложения
+        setColorSpace(getColor(activity,R.color.white)) //установка цвета холста
+        settingPalette()//настройки палитры
         settingToolBar(activity, "Кисть") //установка заголовка
     }
 
+    private fun getColor(activity: AppCompatActivity, color: Int):Int{ //получить цвет из colors
+        return ContextCompat.getColor(activity, color)
+    }
     private fun initFragments(activity: AppCompatActivity, savedInstanceState: Bundle?) {
         viewModelMainActivity.initFragments(activity, savedInstanceState)//инициализация фрагментов
     }
@@ -94,6 +97,16 @@ class MainActivity : AppCompatActivity(), Animation.AnimationListener {
         viewModelMainActivity.settingNavigationBar(activity)
     }
 
+    private fun settingPalette() {
+       //добавляем все нужные цвета в палитру по порядку
+        addColorPalette(Color.RED)
+        addColorPalette(Color.GREEN)
+        addColorPalette(Color.BLUE)
+        addColorPalette(Color.LTGRAY)
+        addColorPalette(Color.MAGENTA)
+        addColorPalette(Color.YELLOW)
+        addColorPalette(Color.BLACK)
+    }
     private fun settingToolBar(activity: AppCompatActivity, title: String) {
         //настройки tool bar (установка заголовка)
         viewModelMainActivity.settingToolBar(activity, title)
@@ -101,6 +114,9 @@ class MainActivity : AppCompatActivity(), Animation.AnimationListener {
 
     private fun setBackColor(color: Int) {//установка BackgroundColor
        viewModelMainActivity.setBackColor(color)
+    }
+    private fun addColorPalette(color: Int) {//установка BackgroundColor
+       viewModelMainActivity.addColor(color)
     }
     private fun setColorSpace(color: Int) {//установка BackgroundColor
         viewModelCSV.setColorSpace(color)

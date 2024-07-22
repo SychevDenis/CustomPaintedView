@@ -32,24 +32,12 @@ class ViewModelMainActivity @Inject constructor(
     private val updateBackgroundColorAppUseCase: UpdateBackgroundColorAppUseCase,
     private val paintIconButtonWidthBrushUseCase: PaintIconButtonWidthBrushUseCase
 ) : ViewModel() {
-    var vmListViewColor = MutableLiveData(mutableListOf<Int>())//лист цветов палитры
+    var vmListViewColor = MutableLiveData(mutableSetOf<Int>())//лист цветов палитры
     var vmVisiblePalette = MutableLiveData(false)//видимость палитры
     var vmVisibleViewWidthBrush = MutableLiveData(false)//видимость кисти
     var vmStrokeWidth = MutableLiveData(10f)//стандартная ширина кисти
-    private var colorBack = Color.BLACK //стандартный цвет заднего фона
+    private var colorBack = Color.BLACK //стандартный цвет оболочки приложения
     private var colorIconPalette = Color.BLACK //стандартный кисти
-
-    init {
-        //добавляем все нужные цвета в палитру
-        addColor(Color.RED)
-        addColor(Color.GREEN)
-        addColor(Color.BLUE)
-        addColor(Color.LTGRAY)
-        addColor(Color.MAGENTA)
-        addColor(Color.YELLOW)
-        addColor(Color.BLACK)
-        //addColor(Color.WHITE)
-    }
 
     fun paintIconButtonWidthBrush(width: Float,buttonWidthBrush:ImageButton):Boolean{
         return paintIconButtonWidthBrushUseCase.paint(width,buttonWidthBrush)
@@ -69,7 +57,7 @@ class ViewModelMainActivity @Inject constructor(
     }
 
     fun setProgressSeekBar(progress: Int) { //установка ширины кисти из view настройки ширины кисти
-        vmStrokeWidth.value = progress.toFloat() ?: 10f
+        vmStrokeWidth.value = progress.toFloat()
     }
 
     fun addColor(color: Int): Boolean {//добавить цвет в палитру
@@ -78,7 +66,6 @@ class ViewModelMainActivity @Inject constructor(
         setListViewColor(newList)
         return oldList != newList //если цвет добавлен, возвращаем true, иначе false
     }
-
 //    fun removeColor(): Boolean { //удалить цвет из палитры (функция в разработке)
 //        val oldList = getListViewColor()
 //        val newList = removeColorInBarUseCases.removeColor(oldList)
@@ -89,8 +76,7 @@ class ViewModelMainActivity @Inject constructor(
         return vmVisiblePalette.value ?: return false
     }
 
-    private fun getVisibilityViewWidthBrush(): Boolean {//читаем видимость
-        // панели ширины кисти
+    private fun getVisibilityViewWidthBrush(): Boolean {//читаем видимость панели ширины кисти
         return vmVisibleViewWidthBrush.value ?: return false
     }
 
@@ -105,8 +91,7 @@ class ViewModelMainActivity @Inject constructor(
         return vmVisibleViewWidthBrush.value ?: return false
     }
 
-    fun visibilityInversionViewWidthBrush(): Boolean { //инверсия видимости
-        // панели ширины кисти
+    fun visibilityInversionViewWidthBrush(): Boolean { //инверсия видимости панели ширины кисти
         return setVisibleViewWidthBrush(!getVisibilityViewWidthBrush())
     }
 
@@ -114,16 +99,16 @@ class ViewModelMainActivity @Inject constructor(
         return setVisiblePalette(!getVisibilityPalette())
     }
 
-    fun getDateTime(): String {
+    fun getDateTime(): String { //получить дату и время
         return getDateTimeUseCase.getDateTime(FORMAT_FILE_PICTURE)
     }
 
 
-    private fun getListViewColor(): MutableList<Int> {
-        return vmListViewColor.value?.toMutableList() ?: return mutableListOf()
+    private fun getListViewColor(): MutableSet<Int> {
+        return vmListViewColor.value?.toMutableSet() ?: return mutableSetOf()
     }
 
-    private fun setListViewColor(list: MutableList<Int>) {
+    private fun setListViewColor(list: MutableSet<Int>) {
         vmListViewColor.value = list
     }
 

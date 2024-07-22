@@ -13,13 +13,13 @@ class CanvasRepositoryImplColor(
 
     override fun addColorInPalette(
         color: Int,
-        list: MutableList<Int>,
+        list: MutableSet<Int>,
         maxLength: Int
-    ): MutableList<Int> {
+    ): MutableSet<Int> {
         return addColor.addColor(color, list, maxLength)
     }
 
-    override fun removeColorInBar(list: MutableList<Int>): MutableList<Int> {
+    override fun removeColorInBar(list: MutableSet<Int>): MutableSet<Int> {
         return removeColor.removeColor(list)
     }
 

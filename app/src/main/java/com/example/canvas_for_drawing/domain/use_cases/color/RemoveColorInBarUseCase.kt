@@ -4,7 +4,7 @@ import javax.inject.Inject
 
 class RemoveColorInBarUseCase
 @Inject constructor(private val canvasRepository: CanvasRepositoryColor) {
-    fun removeColor(list: MutableList<Int>):MutableList<Int>{
+    fun removeColor(list: MutableSet<Int>):MutableSet<Int>{
        return canvasRepository.removeColorInBar(list)
     }
 }
