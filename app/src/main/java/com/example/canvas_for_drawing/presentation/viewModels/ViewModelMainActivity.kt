@@ -39,9 +39,10 @@ class ViewModelMainActivity @Inject constructor(
     private var colorBack = Color.BLACK //стандартный цвет оболочки приложения
     private var colorIconPalette = Color.BLACK //стандартный кисти
 
-    fun paintIconButtonWidthBrush(width: Float,buttonWidthBrush:ImageButton):Boolean{
-        return paintIconButtonWidthBrushUseCase.paint(width,buttonWidthBrush)
+    fun paintIconButtonWidthBrush(width: Float, buttonWidthBrush: ImageButton): Boolean {
+        return paintIconButtonWidthBrushUseCase.paint(width, buttonWidthBrush)
     }
+
     fun setBackColor(color: Int) { //установка в переменную background приложения
         colorBack = color
     }
@@ -66,7 +67,8 @@ class ViewModelMainActivity @Inject constructor(
         setListViewColor(newList)
         return oldList != newList //если цвет добавлен, возвращаем true, иначе false
     }
-//    fun removeColor(): Boolean { //удалить цвет из палитры (функция в разработке)
+
+    //    fun removeColor(): Boolean { //удалить цвет из палитры (функция в разработке)
 //        val oldList = getListViewColor()
 //        val newList = removeColorInBarUseCases.removeColor(oldList)
 //        setListViewColor(newList)
@@ -95,8 +97,19 @@ class ViewModelMainActivity @Inject constructor(
         return setVisibleViewWidthBrush(!getVisibilityViewWidthBrush())
     }
 
-    fun visibilityInvisibleVisiblePalette(): Boolean {//инверсия видимости палитры
+    fun visibilityInversionVisiblePalette(): Boolean {//инверсия видимости палитры
         return setVisiblePalette(!getVisibilityPalette())
+    }
+
+    fun invisibleViewWidthBrush(): Boolean {//спрятать панель ширины кисти
+        if (getVisibilityViewWidthBrush()) {
+            return setVisibleViewWidthBrush(false)
+        } else return false
+    }
+    fun invisiblePalette(): Boolean {//спрятать палитру
+        if (getVisibilityPalette()) {
+            return setVisiblePalette(false)
+        } else return false
     }
 
     fun getDateTime(): String { //получить дату и время
@@ -116,10 +129,12 @@ class ViewModelMainActivity @Inject constructor(
         saveLastColor(color)//сохраняем последний выбранный цвет
         return createColorCircleDrawablesUseCase.create(color) as LayerDrawable
     }
-    private fun saveLastColor(color: Int){//сохранить последний цвет
+
+    private fun saveLastColor(color: Int) {//сохранить последний цвет
         colorIconPalette = color
     }
-    fun getLastSavedColor():Int{//получить последний цвет
+
+    fun getLastSavedColor(): Int {//получить последний цвет
         return colorIconPalette
     }
 

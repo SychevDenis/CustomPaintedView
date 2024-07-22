@@ -1,5 +1,4 @@
 package com.example.canvas_for_drawing.presentation.fragments
-
 import android.graphics.Paint
 import android.graphics.Path
 import android.os.Bundle
@@ -18,7 +17,7 @@ import com.example.canvas_for_drawing.presentation.viewModels.ViewModelCSV
 private lateinit var customSurfaceView: CustomSurfaceView
 
 class FragmentCustomSurfaceView() : Fragment(),
-    CustomSurfaceView.CustomSurfaceViewInterface {
+    CustomSurfaceView.CustomSurfaceViewInterfaceFragment {
 
     private val viewModelCSV: ViewModelCSV by activityViewModels()//нужно искать способ вставить
     //это через инъекцию, но я пока не знаю как
@@ -37,7 +36,11 @@ class FragmentCustomSurfaceView() : Fragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         customSurfaceView = view.findViewById(R.id.custom_surfaceView)
-        customSurfaceView.CSVInterface = this
+        //передача интерфейс fragment в CustomSurfaceView
+        customSurfaceView.setCSVInterfaceFragment(this)
+        //передача интерфейс activity в CustomSurfaceView
+        customSurfaceView.setCSVInterfaceActivity(activity
+                as CustomSurfaceView.CustomSurfaceViewInterfaceActivity)
         viewModelObserve()//подписываемся на нужные объекты
     }
 
@@ -58,7 +61,7 @@ class FragmentCustomSurfaceView() : Fragment(),
         }
     }
 
-    override fun touchEvent(event: MotionEvent) {
+    override fun touchEvent(event: MotionEvent) {//вызывается при нажатии на CustomSurfaceView
         viewModelCSV.paint(DrawingObject(event.x, event.y, event.action))
     }
 

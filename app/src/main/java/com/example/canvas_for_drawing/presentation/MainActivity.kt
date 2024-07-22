@@ -21,14 +21,17 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.canvas_for_drawing.R
 import com.example.canvas_for_drawing.di.DaggerComponentActivity
 import com.example.canvas_for_drawing.presentation.fragments.FragmentButtonGroup
+import com.example.canvas_for_drawing.presentation.fragments.FragmentCustomSurfaceView
 import com.example.canvas_for_drawing.presentation.viewModels.ViewModelCSV
 import com.example.canvas_for_drawing.presentation.viewModels.ViewModelMainActivity
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(), Animation.AnimationListener {
+class MainActivity : AppCompatActivity(), Animation.AnimationListener,
+    CustomSurfaceView.CustomSurfaceViewInterfaceActivity {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private lateinit var fragmentButtonGroup: FragmentButtonGroup
+    private lateinit var fragmentCustomSurfaceView: FragmentCustomSurfaceView
     private lateinit var gridLayout: GridLayout //палитра цветов
     private lateinit var inAnimator: Animation
     private lateinit var outAnimator: Animation
@@ -53,10 +56,16 @@ class MainActivity : AppCompatActivity(), Animation.AnimationListener {
         setContentView(R.layout.activity_main)
         initObjectsAndView(this)//инициализация объектов и view
         viewModelObserve()//подписываемся на обновления
-        settingApp(this,savedInstanceState)//настройки приложения
+        settingApp(this, savedInstanceState)//настройки приложения
         setListener()//подключаем слушатели
     }
-
+    override fun onResume() {
+        super.onResume()
+        fragmentButtonGroup = supportFragmentManager
+            .findFragmentById(R.id.fragment_button_group) as FragmentButtonGroup
+        fragmentCustomSurfaceView = supportFragmentManager
+            .findFragmentById(R.id.fragment_customSv_containerView) as FragmentCustomSurfaceView
+    }
     private fun initObjectsAndView(activity: AppCompatActivity) {
         initViewModels()//инициализируем вью модели
         inAnimator = AnimationUtils.loadAnimation(activity, R.anim.alpha_in)
@@ -80,14 +89,15 @@ class MainActivity : AppCompatActivity(), Animation.AnimationListener {
         initFragments(activity, savedInstanceState)//инициализация фрагментов
         settingNavigationBar(activity) //настройка NavigationBar
         setBackColor(getColor(activity, R.color.background_color)) //цвет заднего фона приложения
-        setColorSpace(getColor(activity,R.color.white)) //установка цвета холста
+        setColorSpace(getColor(activity, R.color.white)) //установка цвета холста
         settingPalette()//настройки палитры
         settingToolBar(activity, "Кисть") //установка заголовка
     }
 
-    private fun getColor(activity: AppCompatActivity, color: Int):Int{ //получить цвет из colors
+    private fun getColor(activity: AppCompatActivity, color: Int): Int { //получить цвет из colors
         return ContextCompat.getColor(activity, color)
     }
+
     private fun initFragments(activity: AppCompatActivity, savedInstanceState: Bundle?) {
         viewModelMainActivity.initFragments(activity, savedInstanceState)//инициализация фрагментов
     }
@@ -98,7 +108,7 @@ class MainActivity : AppCompatActivity(), Animation.AnimationListener {
     }
 
     private fun settingPalette() {
-       //добавляем все нужные цвета в палитру по порядку
+        //добавляем все нужные цвета в палитру по порядку
         addColorPalette(Color.RED)
         addColorPalette(Color.GREEN)
         addColorPalette(Color.BLUE)
@@ -107,17 +117,20 @@ class MainActivity : AppCompatActivity(), Animation.AnimationListener {
         addColorPalette(Color.YELLOW)
         addColorPalette(Color.BLACK)
     }
+
     private fun settingToolBar(activity: AppCompatActivity, title: String) {
         //настройки tool bar (установка заголовка)
         viewModelMainActivity.settingToolBar(activity, title)
     }
 
     private fun setBackColor(color: Int) {//установка BackgroundColor
-       viewModelMainActivity.setBackColor(color)
+        viewModelMainActivity.setBackColor(color)
     }
+
     private fun addColorPalette(color: Int) {//установка BackgroundColor
-       viewModelMainActivity.addColor(color)
+        viewModelMainActivity.addColor(color)
     }
+
     private fun setColorSpace(color: Int) {//установка BackgroundColor
         viewModelCSV.setColorSpace(color)
     }
@@ -134,7 +147,7 @@ class MainActivity : AppCompatActivity(), Animation.AnimationListener {
                         viewModelMainActivity.createColorCircleDrawables(color)
                     )
                     viewModelCSV.setColorStroke(color)//выбор цвета кисти
-                    viewModelMainActivity.visibilityInvisibleVisiblePalette()
+                    viewModelMainActivity.visibilityInversionVisiblePalette()
                 }
                 viewColor.background = GradientDrawable().apply {
                     shape = GradientDrawable.OVAL
@@ -156,7 +169,10 @@ class MainActivity : AppCompatActivity(), Animation.AnimationListener {
         }
         viewModelMainActivity.vmVisibleViewWidthBrush.observe(this) {
             //при изменении видимости панели регулировки размера кисти
+            if (it) viewWidthBrush.startAnimation(inAnimator)
+            else viewWidthBrush.startAnimation(outAnimator)
             viewWidthBrush.isVisible = it
+           // viewWidthBrush.isVisible = it
         }
 
     }
@@ -179,11 +195,7 @@ class MainActivity : AppCompatActivity(), Animation.AnimationListener {
         viewModelMainActivity.setProgressSeekBar(progress)
     }
 
-    override fun onResume() {
-        super.onResume()
-        fragmentButtonGroup = supportFragmentManager
-            .findFragmentById(R.id.fragment_button_group) as FragmentButtonGroup
-    }
+
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {//загружаем меню
         menuInflater.inflate(R.menu.main_menu, menu)
@@ -196,22 +208,25 @@ class MainActivity : AppCompatActivity(), Animation.AnimationListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean { //кнопки меню
         when (item.itemId) {
             R.id.menuActivityButtonClean -> {//очистить палитру
+                viewModelMainActivity.invisiblePalette()//спрятать палитру
                 viewModelCSV.clearCanvas()
             }
 
             R.id.menuActivityButtonPalette -> {//спрятать или показать палитру
-                settingToolBar(this,"Кисть")
-                val lastColor= viewModelMainActivity.getLastSavedColor()
+                settingToolBar(this, "Кисть")
+                val lastColor = viewModelMainActivity.getLastSavedColor()
                 viewModelCSV.setColorStroke(lastColor)
-                viewModelMainActivity.visibilityInvisibleVisiblePalette()
+                viewModelMainActivity.visibilityInversionVisiblePalette()
             }
 
             R.id.menuActivityButtonSaveImage -> {
+                viewModelMainActivity.invisiblePalette()//спрятать палитру
                 save(this)//сохранить канвас в jpg
             }
 
             R.id.menuActivityButtonEraser -> {
-                settingToolBar(this,"Ластик")
+                viewModelMainActivity.invisiblePalette()//спрятать палитру
+                settingToolBar(this, "Ластик")
                 viewModelCSV.setEraser()//выбрать ластик
             }
         }
@@ -221,14 +236,17 @@ class MainActivity : AppCompatActivity(), Animation.AnimationListener {
     private fun save(activity: AppCompatActivity) {//функция сохранения изображения
         if (getPermissionWriteReadExternalExternalStorage(activity)) {
             val dateTime = viewModelMainActivity.getDateTime()
-            if (viewModelCSV.saveCanvas(dateTime))
-                Toast.makeText(activity, "Сохранено $dateTime", Toast.LENGTH_SHORT).show()
-            else Toast.makeText(activity, "Ошибка сохранения", Toast.LENGTH_SHORT).show()
+            if (viewModelCSV.saveCanvas(dateTime)) toastShow(activity, "Сохранено $dateTime")
+            else toastShow(activity, "Ошибка сохранения")
         }
     }
 
+    private fun toastShow(activity: AppCompatActivity, text: String) {//показать тост
+        Toast.makeText(activity, text, Toast.LENGTH_SHORT).show()
+    }
+
     private fun getPermissionWriteReadExternalExternalStorage(activity: AppCompatActivity)
-    : Boolean { //получение разрешений на сохранение
+            : Boolean { //получение разрешений на сохранение
         return viewModelMainActivity.getPermissionWriteReadExternalStorage(activity)
     }
 
@@ -242,6 +260,10 @@ class MainActivity : AppCompatActivity(), Animation.AnimationListener {
 
     override fun onAnimationRepeat(animation: Animation?) {
 
+    }
+    override fun touch() {//вызывается событием из customSurfaceView
+        viewModelMainActivity.invisiblePalette()//спрятать палитру
+        viewModelMainActivity.invisibleViewWidthBrush()//спрятать панель ширины кисти
     }
 }
 

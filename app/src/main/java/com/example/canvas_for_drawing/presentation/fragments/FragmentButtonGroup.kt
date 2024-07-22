@@ -70,10 +70,7 @@ class FragmentButtonGroup() : Fragment() {
         buttonWidthBrush = view.findViewById(R.id.view_fragment_button_group_brush_width)
     }
 
-    private fun paintIconButtonWidthBrush(
-        width: Float,
-    ) {
-        //создание иконки
+    private fun paintIconButtonWidthBrush(width: Float, ) {//создание иконки
         viewModelMainActivity.paintIconButtonWidthBrush(width, buttonWidthBrush)
     }
 }

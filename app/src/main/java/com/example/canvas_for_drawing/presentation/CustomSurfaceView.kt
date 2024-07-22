@@ -15,7 +15,8 @@ class CustomSurfaceView @JvmOverloads constructor(//jvm помогает выб�
     context: Context?, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : SurfaceView(context, attrs, defStyleAttr), SurfaceHolder.Callback {
 
-    var CSVInterface: CustomSurfaceViewInterface? = null
+    private var csvInterfaceFragment: CustomSurfaceViewInterfaceFragment? = null
+    private var csvInterfaceActivity: CustomSurfaceViewInterfaceActivity? = null
     private var colorBackgroundCanvas = Color.WHITE //default color
     private var activeLayer = 0 //активный слой
     private var drawingPermission = true //разрешение на рисование
@@ -23,6 +24,12 @@ class CustomSurfaceView @JvmOverloads constructor(//jvm помогает выб�
     private var paintList = mutableListOf<Paint>()
     private lateinit var scope:CoroutineScope
 
+    fun setCSVInterfaceFragment(csvInterface: CustomSurfaceViewInterfaceFragment?){
+        csvInterfaceFragment = csvInterface
+    }
+    fun setCSVInterfaceActivity(csvInterface: CustomSurfaceViewInterfaceActivity?){
+        csvInterfaceActivity = csvInterface
+    }
     @SuppressLint("SuspiciousIndentation")
     override fun surfaceCreated(p0: SurfaceHolder) {
         scope = CoroutineScope(Dispatchers.IO)
@@ -77,24 +84,28 @@ class CustomSurfaceView @JvmOverloads constructor(//jvm помогает выб�
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         when (event?.action) {
             MotionEvent.ACTION_DOWN -> {
-                eventHandler(event)
+                eventHandlerFragment(event)
+                eventHandlerActivity()
             }
 
             MotionEvent.ACTION_MOVE -> {
-                eventHandler(event)
+                eventHandlerFragment(event)
             }
 
             MotionEvent.ACTION_UP -> {
-                eventHandler(event)
+                eventHandlerFragment(event)
             }
         }
         return true
     }
 
-    private fun eventHandler(event: MotionEvent) {//обработка события нажатия
-        CSVInterface?.touchEvent(event)
-            ?: throw Exception("Not implemented interface CustomSurfaceView")
-
+    private fun eventHandlerFragment(event: MotionEvent) {//обработка события нажатия
+        csvInterfaceFragment?.touchEvent(event)
+            ?: throw Exception("Fragment not implemented interface CustomSurfaceViewFragment")
+    }
+    private fun eventHandlerActivity() {//обработка события нажатия
+        csvInterfaceActivity?.touch()
+            ?: throw Exception("Activity not implemented interface CustomSurfaceViewActivity")
     }
 
     private fun drawLayers(
@@ -132,14 +143,17 @@ class CustomSurfaceView @JvmOverloads constructor(//jvm помогает выб�
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        CSVInterface?.setSizeChanged(w, h, oldw, oldh)
+        csvInterfaceFragment?.setSizeChanged(w, h, oldw, oldh)
             ?: throw Exception("Not implemented interface CustomSurfaceView")
     }
 
-    interface CustomSurfaceViewInterface { //интерфейс сообщает о Touch Action
+    interface CustomSurfaceViewInterfaceFragment { //интерфейс сообщает о Touch Action
         fun touchEvent(event: MotionEvent)
         fun setColorBackgroundCanvas(color: Int)
         fun setSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int)
-
     }
+    interface CustomSurfaceViewInterfaceActivity { //интерфейс сообщает о нажатии Touch
+        fun touch()
+    }
+
 }
