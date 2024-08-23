@@ -4,7 +4,7 @@ A program for drawing drafts for an Android smartphone. You can draw with your f
 The program is based on the principles of pure architecture using the Dagger 2 library.
 The program uses 1 activity and 2 fragments. The ability to flip the screen without fear of getting an exception is implemented, since the ViewModel is used.
 
-  Программа для рисования черновиков для Android-смартфона. Рисовать можно пальцем или стилусом. Функции программы: рисование линий, выбор толщины кисти, выбор цвета из палитры, кнопки: "Назад", "Вперед", очистка экрана,  сохранить рисунок на смартфон".
+Программа для рисования черновиков для Android-смартфона. Рисовать можно пальцем или стилусом. Функции программы: рисование линий, выбор толщины кисти, выбор цвета из палитры, кнопки: "Назад", "Вперед", очистка экрана,  сохранить рисунок на смартфон".
 Программа основана на принципах чистой архитектуры с использованием библиотеки Dagger 2.
 В программе используется 1 активность и 2 фрагмента. Реализована возможность переворачивать экран, не опасаясь получить исключение, поскольку используется ViewModel.
 
@@ -12,4 +12,7 @@ The program uses 1 activity and 2 fragments. The ability to flip the screen with
 Примеры изображения нарисованные в этой программе. 
 Examples of images drawn in this program.
 
-![Изображение 1](https://github.com/SychevDenis/CustomPaintedView/assets/97845242/e2e85933-e382-4494-8976-2d19301888c0)
+![photo_2024-08-24_02-12-37](https://github.com/user-attachments/assets/58606a8c-9f2a-465b-b3da-27aa05480c3e) ![photo_2024-08-24_02-12-38](https://github.com/user-attachments/assets/33ebfb93-04bc-4bef-978e-6d651f8039df)
+
+![photo_2024-08-24_02-12-37 (2)](https://github.com/user-attachments/assets/ef76c318-a8ff-4d7d-9959-72bde93a6fca)
+
