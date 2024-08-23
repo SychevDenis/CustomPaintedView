@@ -166,7 +166,7 @@ class ViewModelMainActivity @Inject constructor(
     }
 
     companion object {
-        const val MAX_LENGTH = 12 //максимальный размер палитры
+        const val MAX_LENGTH = 15 //максимальный размер палитры
         const val FORMAT_FILE_PICTURE = ".jpg" //формат файла картинки для сохранения
     }
 }

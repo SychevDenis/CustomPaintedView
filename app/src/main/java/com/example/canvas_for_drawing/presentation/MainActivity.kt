@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.GridLayout
@@ -25,6 +27,7 @@ import com.example.canvas_for_drawing.presentation.fragments.FragmentCustomSurfa
 import com.example.canvas_for_drawing.presentation.viewModels.ViewModelCSV
 import com.example.canvas_for_drawing.presentation.viewModels.ViewModelMainActivity
 import javax.inject.Inject
+
 
 class MainActivity : AppCompatActivity(), Animation.AnimationListener,
     CustomSurfaceView.CustomSurfaceViewInterfaceActivity {
@@ -108,13 +111,19 @@ class MainActivity : AppCompatActivity(), Animation.AnimationListener,
     }
 
     private fun settingPalette() {
-        //добавляем все нужные цвета в палитру по порядку
+        //добавляем все нужные цвета в палитру по порядку, а так же самостоятельно созданные цвета
+        //в дальнейшем создание своих цветов возможно реализовать внутри самой программы
+        addColorPalette(0xFFff8282.toInt())//бледно красный
         addColorPalette(Color.RED)
+        addColorPalette(0xFF41c45d.toInt())//темно зеленый
         addColorPalette(Color.GREEN)
         addColorPalette(Color.BLUE)
+        addColorPalette(0xFF0076fc.toInt())//светло синий
         addColorPalette(Color.LTGRAY)
+        addColorPalette(0xFFdb00fc.toInt())//темно фиолетовый
         addColorPalette(Color.MAGENTA)
         addColorPalette(Color.YELLOW)
+        addColorPalette(0xFFfcab30.toInt())//ораньжевый
         addColorPalette(Color.BLACK)
     }
 
